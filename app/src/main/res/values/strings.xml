@@ -1,0 +1,25 @@
+<resources>
+	<string name="app_name">Image Gallery</string>
+	<string name="image_description">Image</string>
+	
+	<string name="menu_select_message">%s selected</string>
+	<string name="plus_one">Plus One</string>
+	<string name="comment">Comment</string>
+	<string name="add">Add</string>
+	<string name="share">Share</string>
+	
+	<string name="louge">Louge</string>
+	<string name="mountain_view">Mountain View</string>
+	<string name="air">Air</string>
+	<string name="race_car">Race car</string>
+	<string name="desks">Desks</string>
+	<string name="lounge">Lounge</string>
+	<string name="hive">Hive</string>
+	<string name="logo">Logo</string>
+	
+	<string name="image_shared_element_transition">image_shared_element_transition</string>
+	
+	
+	
+
+</resources>
