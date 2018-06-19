@@ -15,7 +15,7 @@
  */
 
 
-package com.radleymarx.imagegallerydemo.adapter;
+package com.radleymarx.imagegallerydemo.data;
 
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
@@ -25,10 +25,10 @@ import com.radleymarx.imagegallerydemo.R;
 /**
  * Holds the image resource references used by the grid and the pager fragments.
  */
-abstract class ImageData {
+public abstract class ImageData {
   
   @DrawableRes
-  static final int[] IMAGE_DRAWABLES = {
+  static final public int[] IMAGE_DRAWABLES = {
       R.drawable.louge,
       R.drawable.mountainview,
       R.drawable.air,
@@ -40,7 +40,7 @@ abstract class ImageData {
   };
   
   @StringRes
-  static final int[] IMAGE_NAMES = {
+  static final public int[] IMAGE_NAMES = {
       R.string.louge,
       R.string.mountain_view,
       R.string.air,

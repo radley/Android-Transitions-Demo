@@ -15,12 +15,14 @@
   -->
 
 <transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
-	android:duration="375"
+	android:duration="@integer/shared_element_transition_duration"
+	android:startDelay="@integer/shared_element_transition_start_delay"
 	android:interpolator="@android:interpolator/fast_out_slow_in"
-	android:transitionOrdering="together"
-	android:startDelay="50">
-	<changeClipBounds/>
-	<changeImageTransform />
+	android:transitionOrdering="together">
+	<changeBounds>
+		<arcMotion android:maximumAngle="50" />
+	</changeBounds>
 	<changeTransform />
-	<changeBounds/>
+	<changeClipBounds/>
+	<changeImageTransform/>
 </transitionSet>

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.fragment;
+package com.radleymarx.imagegallerydemo.ui.preview;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
@@ -31,6 +32,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.radleymarx.imagegallerydemo.R;
 
@@ -38,9 +40,11 @@ import com.radleymarx.imagegallerydemo.R;
  * A fragment for displaying an image.
  */
 public class ImageFragment extends Fragment {
-
-  private static final String KEY_IMAGE_RES = "com.google.samples.gridtopager.key.imageRes";
-
+  
+  private static final String KEY_IMAGE_RES = "com.radleymarx.imagegallerydemo.key.imageRes";
+  
+  protected Bitmap mBitmap;
+  
   public static ImageFragment newInstance(@DrawableRes int drawableRes) {
     ImageFragment fragment = new ImageFragment();
     Bundle argument = new Bundle();
@@ -48,45 +52,47 @@ public class ImageFragment extends Fragment {
     fragment.setArguments(argument);
     return fragment;
   }
-
+  
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-													 @Nullable Bundle savedInstanceState) {
-    final View view = inflater.inflate(R.layout.fragment_image, container, false);
-
+                           @Nullable Bundle savedInstanceState) {
+    
+    ImageView imageView = (ImageView) inflater.inflate(R.layout.fragment_image, container, false);
+    
     Bundle arguments = getArguments();
     @DrawableRes int imageRes = arguments.getInt(KEY_IMAGE_RES);
+    
+    // Give image a unique transition id.
+    imageView.setTransitionName(String.valueOf(imageRes));
+  
+  
+    RequestOptions options = new RequestOptions()
+        .skipMemoryCache(true)
+        .fitCenter();
 
-    // Just like we do when binding views at the grid, we set the transition name to be the string
-    // value of the image res.
-    view.findViewById(R.id.image).setTransitionName(String.valueOf(imageRes));
-
-    // Load the image with Glide to prevent OOM error when the image drawables are very large.
     Glide.with(this)
         .load(imageRes)
+        .apply(options)
         .listener(new RequestListener<Drawable>() {
           @Override
           public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable>
               target, boolean isFirstResource) {
-            // The postponeEnterTransition is called on the parent ImagePagerFragment, so the
-            // startPostponedEnterTransition() should also be called on it to get the transition
-            // going in case of a failure.
             getParentFragment().startPostponedEnterTransition();
             return false;
           }
-
+        
           @Override
           public boolean onResourceReady(Drawable resource, Object model, Target<Drawable>
               target, DataSource dataSource, boolean isFirstResource) {
-            // The postponeEnterTransition is called on the parent ImagePagerFragment, so the
-            // startPostponedEnterTransition() should also be called on it to get the transition
-            // going when the image is ready.
             getParentFragment().startPostponedEnterTransition();
             return false;
           }
         })
-        .into((ImageView) view.findViewById(R.id.image));
-    return view;
+        .into(imageView);
+
+    return imageView;
   }
+
+
 }

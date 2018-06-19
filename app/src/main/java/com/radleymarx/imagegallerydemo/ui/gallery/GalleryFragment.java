@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.fragment;
+package com.radleymarx.imagegallerydemo.ui.gallery;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -25,7 +25,6 @@ import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.SharedElementCallback;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
@@ -36,12 +35,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 
 import com.radleymarx.imagegallerydemo.MainActivity;
 import com.radleymarx.imagegallerydemo.R;
-import com.radleymarx.imagegallerydemo.adapter.GridAdapter;
+import com.radleymarx.imagegallerydemo.transition.MediaSharedElementCallback;
 
 import java.util.List;
 import java.util.Map;
@@ -49,10 +47,11 @@ import java.util.Map;
 /**
  * A fragment for displaying a grid of images.
  */
-public class GridFragment extends Fragment {
+public class GalleryFragment extends Fragment {
   
   protected RecyclerView mRecyclerView;
   protected View mView;
+  
   
   @Nullable
   @Override
@@ -62,22 +61,18 @@ public class GridFragment extends Fragment {
     final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.AppTheme);
     LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
     
-    mView = (View) localInflater.inflate(R.layout.fragment_grid, container, false);
+    mView = (View) localInflater.inflate(R.layout.fragment_gallery, container, false);
+    
     
     Toolbar toolbar = (Toolbar) mView.findViewById(R.id.toolbar);
     ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-    
-    // Remove default label and use custom textView
-    ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-    TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);
-    title.setText(getResources().getString(R.string.app_name));
+    toolbar.setTitle(getResources().getString(R.string.app_name));
+
     
     mRecyclerView = (RecyclerView) mView.findViewById(R.id.recycler_view);
-    
-    GridFragment.ItemOffsetDecoration itemDecoration = new GridFragment.ItemOffsetDecoration(getContext(), R.dimen.thumbnail_padding);
+    GalleryFragment.ItemOffsetDecoration itemDecoration = new GalleryFragment.ItemOffsetDecoration(getContext(), R.dimen.thumbnail_padding);
     mRecyclerView.addItemDecoration(itemDecoration);
-    
-    mRecyclerView.setAdapter(new GridAdapter(this));
+    mRecyclerView.setAdapter(new GalleryAdapter(this));
     
     applySystemStyles();
     prepareTransitions();
@@ -99,15 +94,8 @@ public class GridFragment extends Fragment {
   protected void scrollToPosition() {
     mRecyclerView.addOnLayoutChangeListener(new OnLayoutChangeListener() {
       @Override
-      public void onLayoutChange(View v,
-                                 int left,
-                                 int top,
-                                 int right,
-                                 int bottom,
-                                 int oldLeft,
-                                 int oldTop,
-                                 int oldRight,
-                                 int oldBottom) {
+      public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                 int oldLeft, int oldTop, int oldRight, int oldBottom) {
         mRecyclerView.removeOnLayoutChangeListener(this);
         
         final RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
@@ -128,18 +116,18 @@ public class GridFragment extends Fragment {
    * that affect the flow.
    */
   protected void prepareTransitions() {
-    
-    setExitTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.grid_exit_transition));
+  
+    setReenterTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.grid_fade_reenter));
+    setExitTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.grid_fade_exit));
     
     // A similar mapping is set at the ImagePagerFragment with a setEnterSharedElementCallback.
     setExitSharedElementCallback(
-        new SharedElementCallback() {
+        new MediaSharedElementCallback() {
           @Override
           public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
             
             // Locate the ViewHolder for the clicked position.
-            RecyclerView.ViewHolder selectedViewHolder = mRecyclerView
-                .findViewHolderForAdapterPosition(MainActivity.currentPosition);
+            RecyclerView.ViewHolder selectedViewHolder = mRecyclerView.findViewHolderForAdapterPosition(MainActivity.currentPosition);
             
             if (selectedViewHolder == null || selectedViewHolder.itemView == null) {
               return;
@@ -161,7 +149,7 @@ public class GridFragment extends Fragment {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
       getActivity().getWindow().setStatusBarColor(Color.WHITE);
-      getActivity().getWindow().setNavigationBarColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryLight));
+      getActivity().getWindow().setNavigationBarColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
       
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);

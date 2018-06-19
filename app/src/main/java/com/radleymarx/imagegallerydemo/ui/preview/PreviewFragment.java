@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.fragment;
+package com.radleymarx.imagegallerydemo.ui.preview;
 
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.SharedElementCallback;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -34,12 +33,15 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.radleymarx.imagegallerydemo.MainActivity;
 import com.radleymarx.imagegallerydemo.R;
-import com.radleymarx.imagegallerydemo.adapter.ImagePagerAdapter;
+import com.radleymarx.imagegallerydemo.transition.MediaSharedElementCallback;
 
 import java.util.List;
 import java.util.Map;
@@ -47,14 +49,15 @@ import java.util.Map;
 /**
  * A fragment for displaying a pager of images.
  */
-public class ImagePagerFragment extends Fragment {
+public class PreviewFragment extends Fragment {
   
   protected View mView;
   protected ViewPager mViewPager;
   protected Toast mToast;
-  protected ImagePagerAdapter mImagePagerAdapter;
+  protected PreviewAdapter mImagePagerAdapter;
   protected Toolbar mToolbar;
   protected TextView mTitle;
+  protected FrameLayout mBackground;
   
   @Nullable
   @Override
@@ -64,15 +67,20 @@ public class ImagePagerFragment extends Fragment {
     final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.DetailTheme);
     LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
     
-    mView = (View) localInflater.inflate(R.layout.fragment_pager, container, false);
+    mView = (View) localInflater.inflate(R.layout.fragment_preview, container, false);
     
     mToolbar = (Toolbar) mView.findViewById(R.id.toolbar);
     ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
-    ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+    mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        getActivity().onBackPressed();
+      }
+    });
 
     
     mViewPager = (ViewPager) mView.findViewById(R.id.view_pager);
-    mImagePagerAdapter = new ImagePagerAdapter(this);
+    mImagePagerAdapter = new PreviewAdapter(this);
     mViewPager.setAdapter(mImagePagerAdapter);
     
     // Set the current position and add a listener that will update the selection coordinator when
@@ -84,17 +92,20 @@ public class ImagePagerFragment extends Fragment {
       public void onPageSelected(int position) {
         MainActivity.currentPosition = position;
         if(position > 0)
-          mTitle.setText(getResources().getString(mImagePagerAdapter.getTitle(MainActivity.currentPosition)));
+          mToolbar.setTitle(getResources().getString(mImagePagerAdapter.getTitle(MainActivity.currentPosition)));
       }
     });
   
+    mBackground = (FrameLayout) mView.findViewById(R.id.bg_color);
+  
   
     // Use centered textView in Toolbar. Called after mImagePagerAdapter is instantiated.
-    mTitle = (TextView) mToolbar.findViewById(R.id.toolbar_title);
-    mTitle.setText(getResources().getString(mImagePagerAdapter.getTitle(MainActivity.currentPosition)));
+    //mTitle = (TextView) mToolbar.findViewById(R.id.toolbar_title);
+    mToolbar.setTitle(getResources().getString(mImagePagerAdapter.getTitle(MainActivity.currentPosition)));
   
     applySystemStyles();
     prepareLowerMenu();
+    fadeInBackground();
   
     prepareSharedElementTransition();
     
@@ -104,34 +115,25 @@ public class ImagePagerFragment extends Fragment {
     }
     return mView;
   }
+
   
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     
   }
-  
-  
-  /**
-   * Prepares the shared element transition from and back to the grid fragment.
-   */
+
   protected void prepareSharedElementTransition() {
     
-    Transition transition = TransitionInflater.from(getContext())
-        .inflateTransition(R.transition.image_shared_element_transition);
+    Transition transition = TransitionInflater.from(getContext()).inflateTransition(R.transition.image_shared_element);
     
     setSharedElementEnterTransition(transition);
     
-    // A similar mapping is set at the GridFragment with a setExitSharedElementCallback.
     setEnterSharedElementCallback(
-        new SharedElementCallback() {
+        new MediaSharedElementCallback() {
           @Override
           public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
             
-            // Locate the image view at the primary fragment (the ImageFragment that is currently
-            // visible). To locate the fragment, call instantiateItem with the selection position.
-            // At this stage, the method will simply return the fragment at the position and will
-            // not create a new one.
             Fragment currentFragment = (Fragment) mViewPager.getAdapter()
                 .instantiateItem(mViewPager, MainActivity.currentPosition);
             
@@ -139,8 +141,6 @@ public class ImagePagerFragment extends Fragment {
             if (view == null) {
               return;
             }
-            
-            // Map the first shared element name to the child ImageView.
             sharedElements.put(names.get(0), view.findViewById(R.id.image));
           }
         });
@@ -181,6 +181,17 @@ public class ImagePagerFragment extends Fragment {
       getActivity().getWindow().getDecorView().setSystemUiVisibility(0);
       getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(getActivity(),R.color.colorPrimaryDark));
     }
+  }
+  
+  protected void fadeInBackground() {
+  
+    mBackground.setVisibility(View.VISIBLE);
+    
+    Animation mLoadAnimation = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in);
+    mLoadAnimation.setDuration(getResources().getInteger(R.integer.image_pager_bg_fade_in_duration));
+    mLoadAnimation.setStartOffset(getResources().getInteger(R.integer.image_pager_bg_fade_in_start_offset));
+    mBackground.startAnimation(mLoadAnimation);
+
   }
   
   

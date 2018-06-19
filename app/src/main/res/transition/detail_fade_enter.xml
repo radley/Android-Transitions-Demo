@@ -16,9 +16,18 @@
   -->
 
 <transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
-    android:duration="250"
+    android:duration="@integer/grid_exit_transition_duration"
     android:interpolator="@android:interpolator/fast_out_slow_in">
   <fade>
-    <targets android:targetId="@id/thumbnail_holder"/>
+    <targets>
+      <target android:targetId="@id/thumbnail_holder"/>
+      <target android:targetId="@id/recycler_view"/>
+    </targets>
   </fade>
+  <explode>
+    <targets>
+      <target android:targetId="@android:id/statusBarBackground" />
+      <target android:targetId="@android:id/navigationBarBackground" />
+    </targets>
+  </explode>
 </transitionSet>

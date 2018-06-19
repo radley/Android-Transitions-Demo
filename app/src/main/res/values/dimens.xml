@@ -1,4 +1,18 @@
 <resources>
+	
 	<dimen name="thumbnail_padding">4dp</dimen>
 	<integer name="grid_span_count">2</integer>
+	
+	<integer name="shared_element_transition_duration">375</integer>
+	<integer name="shared_element_transition_start_delay">0</integer>
+	
+	<integer name="grid_reenter_transition_duration">500</integer>
+	<integer name="grid_reenter_transition_start_delay">300</integer>
+
+	<integer name="grid_exit_transition_duration">200</integer>
+	<integer name="grid_exit_transition_start_delay">0</integer>
+	
+	<integer name="image_pager_bg_fade_in_duration">275</integer>
+	<integer name="image_pager_bg_fade_in_start_offset">100</integer>
+	
 </resources>

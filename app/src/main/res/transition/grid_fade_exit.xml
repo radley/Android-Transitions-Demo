@@ -16,7 +16,7 @@
   -->
 
 <transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
-    android:duration="250"
+    android:duration="@integer/grid_exit_transition_duration"
     android:interpolator="@android:interpolator/fast_out_slow_in">
   <fade>
     <targets android:targetId="@id/thumbnail_holder"/>

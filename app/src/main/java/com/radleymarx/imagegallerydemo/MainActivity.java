@@ -23,15 +23,12 @@
 
 package com.radleymarx.imagegallerydemo;
 
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
-import com.radleymarx.imagegallerydemo.fragment.GridFragment;
+import com.radleymarx.imagegallerydemo.ui.gallery.GalleryFragment;
+import com.radleymarx.imagegallerydemo.data.ImageData;
 
 public class MainActivity extends AppCompatActivity {
   
@@ -40,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
    * position updated when a grid item is clicked, or when paging the pager.
    * <p>
    * In this demo app, the position always points to an image index at the {@link
-   * com.radleymarx.imagegallerydemo.adapter.ImageData} class.
+   * ImageData} class.
    */
   public static int currentPosition;
   protected static final String KEY_CURRENT_POSITION = "com.radleymarx.photogallerydemo.key.currentPosition";
@@ -60,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     }
     
     FragmentManager fragmentManager = getSupportFragmentManager();
-    fragmentManager.beginTransaction().add(R.id.fragment_container, new GridFragment(), GridFragment.class.getSimpleName()).commit();
+    fragmentManager.beginTransaction().add(R.id.fragment_container, new GalleryFragment(), GalleryFragment.class.getSimpleName()).commit();
   }
   
   

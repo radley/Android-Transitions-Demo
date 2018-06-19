@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.adapter;
+package com.radleymarx.imagegallerydemo.ui.preview;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.radleymarx.imagegallerydemo.fragment.ImageFragment;
-
-import static com.radleymarx.imagegallerydemo.adapter.ImageData.IMAGE_DRAWABLES;
-import static com.radleymarx.imagegallerydemo.adapter.ImageData.IMAGE_NAMES;
+import static com.radleymarx.imagegallerydemo.data.ImageData.IMAGE_DRAWABLES;
+import static com.radleymarx.imagegallerydemo.data.ImageData.IMAGE_NAMES;
 
 
-public class ImagePagerAdapter extends FragmentStatePagerAdapter {
+public class PreviewAdapter extends FragmentStatePagerAdapter {
   
-  public ImagePagerAdapter(Fragment fragment) {
+  public PreviewAdapter(Fragment fragment) {
     // Note: Initialize with the child fragment manager.
     super(fragment.getChildFragmentManager());
   }

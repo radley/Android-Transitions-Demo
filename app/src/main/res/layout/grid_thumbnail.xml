@@ -10,7 +10,8 @@
 		android:id="@+id/thumbnail"
 		android:layout_width="match_parent"
 		android:layout_height="160dp"
-		android:contentDescription="@string/image_description"
-		android:scaleType="centerCrop" />
+		android:cropToPadding="true"
+		android:scaleType="centerCrop"
+		android:contentDescription="@string/image_description" />
 
 </FrameLayout>
