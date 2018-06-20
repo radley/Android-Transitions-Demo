@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.unsplash;
+package com.radleymarx.imagegallerydemo;
 
 import android.content.Intent;
 

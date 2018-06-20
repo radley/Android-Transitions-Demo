@@ -1,4 +1,4 @@
-package com.example.android.unsplash.ui;
+package com.radleymarx.imagegallerydemo.ui;
 
 import android.app.SharedElementCallback;
 import android.content.Intent;
@@ -11,9 +11,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.android.unsplash.IntentUtil;
-import com.example.android.unsplash.databinding.DetailViewBinding;
-import com.example.android.unsplash.databinding.PhotoItemBinding;
+import com.radleymarx.imagegallerydemo.IntentUtil;
+import com.radleymarx.imagegallerydemo.databinding.DetailImageBinding;
+import com.radleymarx.imagegallerydemo.databinding.GalleryImageBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +24,8 @@ public class DetailSharedElementEnterCallback extends SharedElementCallback {
     private final Intent intent;
     private float targetTextSize;
     private ColorStateList targetTextColors;
-    private DetailViewBinding currentDetailBinding;
-    private PhotoItemBinding currentPhotoBinding;
+    private DetailImageBinding currentDetailBinding;
+    private GalleryImageBinding currentPhotoBinding;
     private Rect targetPadding;
 
     public DetailSharedElementEnterCallback(Intent intent) {
@@ -50,12 +50,12 @@ public class DetailSharedElementEnterCallback extends SharedElementCallback {
         mapSharedElement(names, sharedElements, getPhoto());
     }
     
-    public void setBinding(@NonNull DetailViewBinding binding) {
+    public void setBinding(@NonNull DetailImageBinding binding) {
         currentDetailBinding = binding;
         currentPhotoBinding = null;
     }
     
-    public void setBinding(@NonNull PhotoItemBinding binding) {
+    public void setBinding(@NonNull GalleryImageBinding binding) {
         currentPhotoBinding = binding;
         currentDetailBinding = null;
     }

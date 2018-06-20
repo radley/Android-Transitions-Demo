@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.unsplash.data.model;
+package com.radleymarx.imagegallerydemo.data.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

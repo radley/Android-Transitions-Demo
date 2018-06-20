@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.unsplash.ui.grid;
+package com.radleymarx.imagegallerydemo.ui.grid;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.unsplash.transition;
+package com.radleymarx.imagegallerydemo.transition;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

@@ -1,4 +1,4 @@
-package com.example.android.unsplash.ui;
+package com.radleymarx.imagegallerydemo.ui;
 
 import android.transition.Transition;
 

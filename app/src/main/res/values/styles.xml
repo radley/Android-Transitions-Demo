@@ -27,7 +27,10 @@
         <item name="android:windowReenterTransition">@transition/grid_reenter</item>
     </style>
 
-    <style name="App.Details">
+    <style name="App.Details" parent="@android:style/Theme.Material.Light.DarkActionBar">
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/accent</item>
         <item name="android:windowSharedElementEnterTransition">
             @transition/shared_main_detail
         </item>

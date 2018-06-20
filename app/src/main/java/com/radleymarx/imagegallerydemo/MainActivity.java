@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.example.android.unsplash;
+package com.radleymarx.imagegallerydemo;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
@@ -31,15 +30,15 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 
-import com.example.android.unsplash.data.UnsplashService;
-import com.example.android.unsplash.data.model.Photo;
-import com.example.android.unsplash.databinding.PhotoItemBinding;
-import com.example.android.unsplash.ui.DetailSharedElementEnterCallback;
-import com.example.android.unsplash.ui.TransitionCallback;
-import com.example.android.unsplash.ui.grid.GridMarginDecoration;
-import com.example.android.unsplash.ui.grid.OnItemSelectedListener;
-import com.example.android.unsplash.ui.grid.PhotoAdapter;
-import com.example.android.unsplash.ui.grid.PhotoViewHolder;
+import com.radleymarx.imagegallerydemo.data.UnsplashService;
+import com.radleymarx.imagegallerydemo.data.model.Photo;
+import com.radleymarx.imagegallerydemo.databinding.GalleryImageBinding;
+import com.radleymarx.imagegallerydemo.ui.DetailSharedElementEnterCallback;
+import com.radleymarx.imagegallerydemo.ui.TransitionCallback;
+import com.radleymarx.imagegallerydemo.ui.grid.GridMarginDecoration;
+import com.radleymarx.imagegallerydemo.ui.grid.OnItemSelectedListener;
+import com.radleymarx.imagegallerydemo.ui.grid.PhotoAdapter;
+import com.radleymarx.imagegallerydemo.ui.grid.PhotoViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +61,8 @@ public class MainActivity extends Activity {
                 }
             };
 
-    private RecyclerView grid;
-    private ProgressBar empty;
+    private RecyclerView mRecyclerView;
+    private ProgressBar mViewEmpty;
     private ArrayList<Photo> relevantPhotos;
 
     @Override
@@ -74,8 +73,8 @@ public class MainActivity extends Activity {
         // Listener to reset shared element exit transition callbacks.
         getWindow().getSharedElementExitTransition().addListener(sharedExitListener);
 
-        grid = (RecyclerView) findViewById(R.id.image_grid);
-        empty = (ProgressBar) findViewById(android.R.id.empty);
+        mRecyclerView = (RecyclerView) findViewById(R.id.image_grid);
+        mViewEmpty = (ProgressBar) findViewById(android.R.id.empty);
 
         //setupRecyclerView();
 
@@ -113,13 +112,13 @@ public class MainActivity extends Activity {
     }
 
     private void populateGrid() {
-        grid.setAdapter(new PhotoAdapter(this, relevantPhotos));
-        grid.addOnItemTouchListener(new OnItemSelectedListener(MainActivity.this) {
+        mRecyclerView.setAdapter(new PhotoAdapter(this, relevantPhotos));
+        mRecyclerView.addOnItemTouchListener(new OnItemSelectedListener(MainActivity.this) {
             public void onItemSelected(RecyclerView.ViewHolder holder, int position) {
                 if (!(holder instanceof PhotoViewHolder)) {
                     return;
                 }
-                PhotoItemBinding binding = ((PhotoViewHolder) holder).getBinding();
+                GalleryImageBinding binding = ((PhotoViewHolder) holder).getBinding();
                 final Intent intent = getDetailActivityStartIntent(MainActivity.this,
                         relevantPhotos, position, binding);
                 final ActivityOptions activityOptions = getActivityOptions(binding);
@@ -128,7 +127,7 @@ public class MainActivity extends Activity {
                         activityOptions.toBundle());
             }
         });
-        empty.setVisibility(View.GONE);
+        mViewEmpty.setVisibility(View.GONE);
     }
 
     @Override
@@ -141,10 +140,10 @@ public class MainActivity extends Activity {
     public void onActivityReenter(int resultCode, Intent data) {
         postponeEnterTransition();
         // Start the postponed transition when the recycler view is ready to be drawn.
-        grid.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+        mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
-                grid.getViewTreeObserver().removeOnPreDrawListener(this);
+                mRecyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
                 startPostponedEnterTransition();
                 return true;
             }
@@ -155,9 +154,9 @@ public class MainActivity extends Activity {
         }
 
         final int selectedItem = data.getIntExtra(IntentUtil.SELECTED_ITEM_POSITION, 0);
-        grid.scrollToPosition(selectedItem);
+        mRecyclerView.scrollToPosition(selectedItem);
 
-        PhotoViewHolder holder = (PhotoViewHolder) grid.
+        PhotoViewHolder holder = (PhotoViewHolder) mRecyclerView.
                 findViewHolderForAdapterPosition(selectedItem);
         if (holder == null) {
             Log.w(TAG, "onActivityReenter: Holder is null, remapping cancelled.");
@@ -170,7 +169,7 @@ public class MainActivity extends Activity {
     }
 
     private void setupRecyclerView() {
-        GridLayoutManager gridLayoutManager = (GridLayoutManager) grid.getLayoutManager();
+        GridLayoutManager gridLayoutManager = (GridLayoutManager) mRecyclerView.getLayoutManager();
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -185,15 +184,15 @@ public class MainActivity extends Activity {
                 }
             }
         });
-        grid.addItemDecoration(new GridMarginDecoration(
+        mRecyclerView.addItemDecoration(new GridMarginDecoration(
                 getResources().getDimensionPixelSize(R.dimen.grid_item_spacing)));
-        grid.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(true);
 
     }
 
     @NonNull
     private static Intent getDetailActivityStartIntent(Activity host, ArrayList<Photo> photos,
-                                                       int position, PhotoItemBinding binding) {
+                                                       int position, GalleryImageBinding binding) {
         final Intent intent = new Intent(host, DetailActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
         intent.putParcelableArrayListExtra(IntentUtil.PHOTO, photos);
@@ -201,7 +200,7 @@ public class MainActivity extends Activity {
         return intent;
     }
 
-    private ActivityOptions getActivityOptions(PhotoItemBinding binding) {
+    private ActivityOptions getActivityOptions(GalleryImageBinding binding) {
         Pair photoPair = Pair.create(binding.photo, binding.photo.getTransitionName());
         View decorView = getWindow().getDecorView();
         View statusBackground = decorView.findViewById(android.R.id.statusBarBackground);

@@ -16,7 +16,7 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.unsplash" >
+    package="com.radleymarx.imagegallerydemo" >
 
     <uses-permission android:name="android.permission.INTERNET" />
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.unsplash;
+package com.radleymarx.imagegallerydemo;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -28,9 +28,9 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Toolbar;
 
-import com.example.android.unsplash.data.model.Photo;
-import com.example.android.unsplash.ui.DetailSharedElementEnterCallback;
-import com.example.android.unsplash.ui.pager.DetailViewPagerAdapter;
+import com.radleymarx.imagegallerydemo.data.model.Photo;
+import com.radleymarx.imagegallerydemo.ui.DetailSharedElementEnterCallback;
+import com.radleymarx.imagegallerydemo.ui.pager.DetailViewPagerAdapter;
 
 import java.util.ArrayList;
 
@@ -39,6 +39,7 @@ public class DetailActivity extends Activity {
     private static final String STATE_INITIAL_ITEM = "initial";
     private ViewPager viewPager;
     private int initialItem;
+    
     private final View.OnClickListener navigationOnClickListener =
             new View.OnClickListener() {
                 @Override
@@ -46,13 +47,12 @@ public class DetailActivity extends Activity {
                     finishAfterTransition();
                 }
             };
+    
     private DetailSharedElementEnterCallback sharedElementCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_detail);
-
-        postponeEnterTransition();
         
         // TODO save for later... maybe
         //setupTransition();
@@ -61,10 +61,15 @@ public class DetailActivity extends Activity {
         sharedElementCallback = new DetailSharedElementEnterCallback(intent);
         setEnterSharedElementCallback(sharedElementCallback);
         initialItem = intent.getIntExtra(IntentUtil.SELECTED_ITEM_POSITION, 0);
+        
         setUpViewPager(intent.<Photo>getParcelableArrayListExtra(IntentUtil.PHOTO));
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationOnClickListener(navigationOnClickListener);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        toolbar.setNavigationOnClickListener(navigationOnClickListener);
+    
+        if (savedInstanceState == null) {
+            postponeEnterTransition();
+        }
 
         super.onCreate(savedInstanceState);
     }
@@ -95,13 +100,13 @@ public class DetailActivity extends Activity {
                                        int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 if (viewPager.getChildCount() > 0) {
                     viewPager.removeOnLayoutChangeListener(this);
-                    startPostponedEnterTransition();
+                    //startPostponedEnterTransition();
                 }
             }
         });
 
-        viewPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.padding_mini));
-        viewPager.setPageMarginDrawable(R.drawable.page_margin);
+        //viewPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.padding_mini));
+        //viewPager.setPageMarginDrawable(R.drawable.page_margin);
     }
 
     @Override

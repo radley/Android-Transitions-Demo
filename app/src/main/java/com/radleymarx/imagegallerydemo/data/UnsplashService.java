@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package com.example.android.unsplash.ui.grid;
+package com.radleymarx.imagegallerydemo.data;
 
-import android.support.v7.widget.RecyclerView;
+import com.radleymarx.imagegallerydemo.data.model.Photo;
 
-import com.example.android.unsplash.databinding.PhotoItemBinding;
+import java.util.List;
 
-public class PhotoViewHolder extends RecyclerView.ViewHolder {
+import retrofit.Callback;
+import retrofit.http.GET;
 
-    private final PhotoItemBinding binding;
+/**
+ * Modeling the unsplash.it API.
+ */
+public interface UnsplashService {
 
-    public PhotoViewHolder(PhotoItemBinding itemBinding) {
-        super(itemBinding.getRoot());
-        binding = itemBinding;
-    }
+    //String ENDPOINT = "https://unsplash.it";
+    String ENDPOINT = "https://picsum.photos";
 
-    public PhotoItemBinding getBinding() {
-        return binding;
-    }
+    @GET("/list")
+    void getFeed(Callback<List<Photo>> callback);
+
 }

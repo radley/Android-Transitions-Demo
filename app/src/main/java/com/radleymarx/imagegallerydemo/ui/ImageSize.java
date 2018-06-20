@@ -14,24 +14,10 @@
  * limitations under the License.
  */
 
-package com.example.android.unsplash.data;
+package com.radleymarx.imagegallerydemo.ui;
 
-import com.example.android.unsplash.data.model.Photo;
+public class ImageSize {
 
-import java.util.List;
-
-import retrofit.Callback;
-import retrofit.http.GET;
-
-/**
- * Modeling the unsplash.it API.
- */
-public interface UnsplashService {
-
-    //String ENDPOINT = "https://unsplash.it";
-    String ENDPOINT = "https://picsum.photos";
-
-    @GET("/list")
-    void getFeed(Callback<List<Photo>> callback);
-
+    public static final int[] NORMAL = new int[] {480, 400};
+    public static final int[] LARGE = new int[] {960, 800};
 }

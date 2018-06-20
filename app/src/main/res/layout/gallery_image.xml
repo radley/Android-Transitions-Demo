@@ -14,19 +14,16 @@
   ~ limitations under the License.
   -->
 
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
-        <variable name="data" type="com.example.android.unsplash.data.model.Photo" />
+        <variable name="data" type="com.radleymarx.imagegallerydemo.data.model.Photo" />
     </data>
-    
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent">
-      
-    <com.github.chrisbanes.photoview.PhotoView
-            android:id="@+id/photo"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:transitionName="@{@string/transition_photo + data.id}" />
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="@dimen/image_height">
+        <ImageView
+                android:id="@+id/photo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:transitionName="@{@string/transition_photo + data.id}" />
     </FrameLayout>
 </layout>

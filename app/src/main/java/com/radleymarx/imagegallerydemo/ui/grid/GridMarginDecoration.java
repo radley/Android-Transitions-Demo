@@ -14,10 +14,26 @@
  * limitations under the License.
  */
 
-package com.example.android.unsplash.ui;
+package com.radleymarx.imagegallerydemo.ui.grid;
 
-public class ImageSize {
+import android.graphics.Rect;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
-    public static final int[] NORMAL = new int[] {480, 400};
-    public static final int[] LARGE = new int[] {960, 800};
+public class GridMarginDecoration extends RecyclerView.ItemDecoration {
+
+    private int space;
+
+    public GridMarginDecoration(int space) {
+        this.space = space;
+    }
+
+    @Override
+    public void getItemOffsets(Rect outRect, View view,
+                               RecyclerView parent, RecyclerView.State state) {
+        outRect.left = space;
+        outRect.top = space;
+        outRect.right = space;
+        outRect.bottom = space;
+    }
 }
