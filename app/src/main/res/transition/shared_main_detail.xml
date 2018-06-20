@@ -20,16 +20,16 @@
             <target android:targetId="@id/photo" />
         </targets>
         <changeBounds>
-            <arcMotion android:maximumAngle="50"/>
+            <!--<arcMotion android:maximumAngle="50"/>-->
         </changeBounds>
         <changeTransform />
         <changeClipBounds />
         <changeImageTransform />
     </transitionSet>
-    <recolor>
-        <targets>
-            <target android:targetId="@android:id/statusBarBackground" />
-            <target android:targetId="@android:id/navigationBarBackground" />
-        </targets>
-    </recolor>
+    <!--<recolor>-->
+        <!--<targets>-->
+            <!--<target android:targetId="@android:id/statusBarBackground" />-->
+            <!--<target android:targetId="@android:id/navigationBarBackground" />-->
+        <!--</targets>-->
+    <!--</recolor>-->
 </transitionSet>

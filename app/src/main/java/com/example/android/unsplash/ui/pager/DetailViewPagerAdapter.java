@@ -62,7 +62,8 @@ public class DetailViewPagerAdapter extends PagerAdapter {
         // .centerCrop()
         RequestOptions options = new RequestOptions()
             .placeholder(R.color.placeholder)
-            .override(ImageSize.NORMAL[0], ImageSize.NORMAL[1]);
+            .skipMemoryCache(true)
+            .fitCenter();
     
     
         Glide.with(host)

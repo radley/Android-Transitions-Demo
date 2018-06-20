@@ -59,8 +59,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
     
         // .centerCrop()
         RequestOptions options = new RequestOptions()
-            .placeholder(R.color.placeholder)
-            .override(ImageSize.NORMAL[0], ImageSize.NORMAL[1]);
+            .skipMemoryCacheOf(true)
+            .centerCrop()
+            .placeholder(R.color.placeholder);
         
         Glide.with(layoutInflater.getContext())
                 .load(holder.getBinding().getData().getPhotoUrl(requestedPhotoWidth))

@@ -53,15 +53,9 @@ public class DetailActivity extends Activity {
         setContentView(R.layout.activity_detail);
 
         postponeEnterTransition();
-
-        TransitionSet transitions = new TransitionSet();
-        Slide slide = new Slide(Gravity.BOTTOM);
-        slide.setInterpolator(AnimationUtils.loadInterpolator(this,
-                android.R.interpolator.linear_out_slow_in));
-        slide.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
-        transitions.addTransition(slide);
-        transitions.addTransition(new Fade());
-        getWindow().setEnterTransition(transitions);
+        
+        // TODO save for later... maybe
+        //setupTransition();
 
         Intent intent = getIntent();
         sharedElementCallback = new DetailSharedElementEnterCallback(intent);
@@ -73,6 +67,21 @@ public class DetailActivity extends Activity {
         toolbar.setNavigationOnClickListener(navigationOnClickListener);
 
         super.onCreate(savedInstanceState);
+    }
+    
+    private void setupTransition() {
+        
+        // TODO save this for menu bar
+        TransitionSet transitionSet = new TransitionSet();
+        Slide slide = new Slide(Gravity.BOTTOM);
+        slide.setInterpolator(AnimationUtils.loadInterpolator(this,
+            android.R.interpolator.linear_out_slow_in));
+        slide.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
+
+        transitionSet.addTransition(slide);
+        transitionSet.addTransition(new Fade());
+        
+        getWindow().setEnterTransition(transitionSet);
     }
 
     private void setUpViewPager(ArrayList<Photo> photos) {

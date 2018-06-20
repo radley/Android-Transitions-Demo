@@ -28,7 +28,8 @@ import retrofit.http.GET;
  */
 public interface UnsplashService {
 
-    String ENDPOINT = "https://unsplash.it";
+    //String ENDPOINT = "https://unsplash.it";
+    String ENDPOINT = "https://picsum.photos";
 
     @GET("/list")
     void getFeed(Callback<List<Photo>> callback);

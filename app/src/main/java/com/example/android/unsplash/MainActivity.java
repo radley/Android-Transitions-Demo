@@ -96,9 +96,11 @@ public class MainActivity extends Activity {
             unsplashApi.getFeed(new Callback<List<Photo>>() {
                 @Override
                 public void success(List<Photo> photos, Response response) {
+                    
                     // the first items not interesting to us, get the last <n>
                     relevantPhotos = new ArrayList<>(photos.subList(photos.size() - PHOTO_COUNT,
                             photos.size()));
+//                    relevantPhotos = new ArrayList<>(photos.subList(0, PHOTO_COUNT));
                     populateGrid();
                 }
 

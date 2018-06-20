@@ -19,15 +19,11 @@
         <variable name="data" type="com.example.android.unsplash.data.model.Photo" />
     </data>
     <FrameLayout android:layout_width="match_parent"
-                 android:layout_height="@dimen/image_height"
-                 android:stateListAnimator="@animator/raise"
-                 android:foreground="@drawable/grey_ripple"
-                 android:transitionGroup="true">
+                 android:layout_height="@dimen/image_height">
         <ImageView
                 android:id="@+id/photo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
                 android:transitionName="@{@string/transition_photo + data.id}" />
     </FrameLayout>
 </layout>
