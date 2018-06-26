@@ -14,26 +14,22 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.ui.grid;
+package com.radleymarx.imagegallerydemo.ui.gallery;
 
-import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
-public class GridMarginDecoration extends RecyclerView.ItemDecoration {
+import com.radleymarx.imagegallerydemo.databinding.GalleryImageBinding;
 
-    private int space;
+public class PhotoViewHolder extends RecyclerView.ViewHolder {
 
-    public GridMarginDecoration(int space) {
-        this.space = space;
+    private final GalleryImageBinding binding;
+
+    public PhotoViewHolder(GalleryImageBinding itemBinding) {
+        super(itemBinding.getRoot());
+        binding = itemBinding;
     }
 
-    @Override
-    public void getItemOffsets(Rect outRect, View view,
-                               RecyclerView parent, RecyclerView.State state) {
-        outRect.left = space;
-        outRect.top = space;
-        outRect.right = space;
-        outRect.bottom = space;
+    public GalleryImageBinding getBinding() {
+        return binding;
     }
 }

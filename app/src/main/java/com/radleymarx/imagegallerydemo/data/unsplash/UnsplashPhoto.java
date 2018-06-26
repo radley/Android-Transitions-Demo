@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.data.model;
+package com.radleymarx.imagegallerydemo.data.unsplash;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+
+import com.radleymarx.imagegallerydemo.data.BasePhoto;
 
 import java.util.Locale;
 
 /**
  * Model class representing data returned from unsplash.it
  */
-public class Photo implements Parcelable {
+public class UnsplashPhoto extends BasePhoto {
 
     /*{
         "format": "jpeg",
@@ -42,37 +44,37 @@ public class Photo implements Parcelable {
     public final int width;
     public final int height;
     public final String filename;
-    public final long id;
+    public final long long_id;
     public final String author;
     public final String author_url;
     public final String post_url;
 
     private static final String PHOTO_URL_BASE = "https://unsplash.it/%d?image=%d";
 
-    public Photo(String format,
-                 int width,
-                 int height,
-                 String filename,
-                 long id,
-                 String author,
-                 String author_url,
-                 String post_url) {
+    public UnsplashPhoto(String format,
+                         int width,
+                         int height,
+                         String filename,
+                         long long_id,
+                         String author,
+                         String author_url,
+                         String post_url) {
         this.format = format;
         this.width = width;
         this.height = height;
         this.filename = filename;
-        this.id = id;
+        this.long_id = long_id;
         this.author = author;
         this.author_url = author_url;
         this.post_url = post_url;
     }
 
-    protected Photo(Parcel in) {
+    protected UnsplashPhoto(Parcel in) {
         format = in.readString();
         width = in.readInt();
         height = in.readInt();
         filename = in.readString();
-        id = in.readLong();
+        long_id = in.readLong();
         author = in.readString();
         author_url = in.readString();
         post_url = in.readString();
@@ -80,6 +82,10 @@ public class Photo implements Parcelable {
 
     public String getPhotoUrl(int requestWidth) {
         return String.format(Locale.getDefault(), PHOTO_URL_BASE, requestWidth, id);
+    }
+    
+    public String getTitle() {
+        return author;
     }
 
     @Override
@@ -93,21 +99,21 @@ public class Photo implements Parcelable {
         dest.writeInt(width);
         dest.writeInt(height);
         dest.writeString(filename);
-        dest.writeLong(id);
+        dest.writeLong(long_id);
         dest.writeString(author);
         dest.writeString(author_url);
         dest.writeString(post_url);
     }
 
-    public static final Creator<Photo> CREATOR = new Creator<Photo>() {
+    public static final Creator<UnsplashPhoto> CREATOR = new Creator<UnsplashPhoto>() {
         @Override
-        public Photo createFromParcel(Parcel in) {
-            return new Photo(in);
+        public UnsplashPhoto createFromParcel(Parcel in) {
+            return new UnsplashPhoto(in);
         }
 
         @Override
-        public Photo[] newArray(int size) {
-            return new Photo[size];
+        public UnsplashPhoto[] newArray(int size) {
+            return new UnsplashPhoto[size];
         }
     };
 }

@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.data;
-
-import com.radleymarx.imagegallerydemo.data.model.Photo;
+package com.radleymarx.imagegallerydemo.data.unsplash;
 
 import java.util.List;
 
@@ -32,6 +30,6 @@ public interface UnsplashService {
     String ENDPOINT = "https://picsum.photos";
 
     @GET("/list")
-    void getFeed(Callback<List<Photo>> callback);
+    void getFeed(Callback<List<UnsplashPhoto>> callback);
 
 }

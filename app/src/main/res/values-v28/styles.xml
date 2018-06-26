@@ -1,0 +1,21 @@
+<resources>
+
+	<!-- Base application theme. -->
+	<style name="AppTheme" parent="Theme.AppCompat.Light">
+
+		<item name="android:windowContentTransitions">true</item>
+		<item name="colorPrimary">@color/colorPrimary</item>
+		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+		<item name="colorAccent">@color/colorAccent</item>
+		
+		<item name="android:windowAllowEnterTransitionOverlap">true</item>
+		<item name="android:windowAllowReturnTransitionOverlap">true</item>
+		<!--<item name="android:windowExitTransition">@transition/gallery_exit</item>-->
+		<!--<item name="android:windowReenterTransition">@transition/gallery_reenter</item>-->
+		<!---->
+		<item name="android:windowLightNavigationBar">true</item>
+		<item name="android:windowLightStatusBar">true</item>
+	</style>
+
+
+</resources>

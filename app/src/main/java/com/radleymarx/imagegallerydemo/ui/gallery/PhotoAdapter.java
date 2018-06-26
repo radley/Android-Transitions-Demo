@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.ui.grid;
+package com.radleymarx.imagegallerydemo.ui.gallery;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -26,18 +26,18 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.radleymarx.imagegallerydemo.R;
-import com.radleymarx.imagegallerydemo.data.model.Photo;
+import com.radleymarx.imagegallerydemo.data.local.LocalPhoto;
 import com.radleymarx.imagegallerydemo.databinding.GalleryImageBinding;
 
 import java.util.ArrayList;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
 
-    private final ArrayList<Photo> photos;
+    private final ArrayList<LocalPhoto> photos;
     private final int requestedPhotoWidth;
     private final LayoutInflater layoutInflater;
 
-    public PhotoAdapter(@NonNull Context context, @NonNull ArrayList<Photo> photos) {
+    public PhotoAdapter(@NonNull Context context, @NonNull ArrayList<LocalPhoto> photos) {
         this.photos = photos;
         requestedPhotoWidth = context.getResources().getDisplayMetrics().widthPixels;
         layoutInflater = LayoutInflater.from(context);
@@ -52,18 +52,18 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
     @Override
     public void onBindViewHolder(final PhotoViewHolder holder, final int position) {
         GalleryImageBinding binding = holder.getBinding();
-        Photo data = photos.get(position);
+        LocalPhoto data = photos.get(position);
         binding.setData(data);
         binding.executePendingBindings();
     
         // .centerCrop()
         RequestOptions options = new RequestOptions()
-            .skipMemoryCacheOf(true)
+            .skipMemoryCacheOf(true) // true value required for smooth transition
             .centerCrop()
             .placeholder(R.color.placeholder);
         
         Glide.with(layoutInflater.getContext())
-                .load(holder.getBinding().getData().getPhotoUrl(requestedPhotoWidth))
+                .load(holder.getBinding().getData().id)
                 .apply(options)
                 .into(holder.getBinding().photo);
     }

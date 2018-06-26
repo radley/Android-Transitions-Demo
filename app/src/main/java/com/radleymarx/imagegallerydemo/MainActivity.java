@@ -17,128 +17,88 @@
 package com.radleymarx.imagegallerydemo;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.SharedElementCallback;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Transition;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.ProgressBar;
 
-import com.radleymarx.imagegallerydemo.data.UnsplashService;
-import com.radleymarx.imagegallerydemo.data.model.Photo;
+import com.radleymarx.imagegallerydemo.data.local.LocalPhoto;
+import com.radleymarx.imagegallerydemo.data.local.LocalPhotoDataProvider;
 import com.radleymarx.imagegallerydemo.databinding.GalleryImageBinding;
-import com.radleymarx.imagegallerydemo.ui.DetailSharedElementEnterCallback;
-import com.radleymarx.imagegallerydemo.ui.TransitionCallback;
-import com.radleymarx.imagegallerydemo.ui.grid.GridMarginDecoration;
-import com.radleymarx.imagegallerydemo.ui.grid.OnItemSelectedListener;
-import com.radleymarx.imagegallerydemo.ui.grid.PhotoAdapter;
-import com.radleymarx.imagegallerydemo.ui.grid.PhotoViewHolder;
+import com.radleymarx.imagegallerydemo.transition.DetailSharedElementEnterCallback;
+import com.radleymarx.imagegallerydemo.transition.TransitionCallback;
+import com.radleymarx.imagegallerydemo.ui.gallery.OnItemSelectedListener;
+import com.radleymarx.imagegallerydemo.ui.gallery.PhotoAdapter;
+import com.radleymarx.imagegallerydemo.ui.gallery.PhotoViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
-public class MainActivity extends Activity {
-
-    private static final int PHOTO_COUNT = 12;
+public class MainActivity extends AppCompatActivity {
+    
     private static final String TAG = "MainActivity";
+    private RecyclerView mRecyclerView;
+    private ArrayList<LocalPhoto> mLocalPhotoList;
 
     private final Transition.TransitionListener sharedExitListener =
             new TransitionCallback() {
                 @Override
                 public void onTransitionEnd(Transition transition) {
-                    setExitSharedElementCallback(null);
+                    setExitSharedElementCallback((SharedElementCallback) null);
                 }
             };
-
-    private RecyclerView mRecyclerView;
-    private ProgressBar mViewEmpty;
-    private ArrayList<Photo> relevantPhotos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    
+        if(getResources().getBoolean(R.bool.portrait_only)){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+
+        applySystemStyles();
         postponeEnterTransition();
+        
         // Listener to reset shared element exit transition callbacks.
         getWindow().getSharedElementExitTransition().addListener(sharedExitListener);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.image_grid);
-        mViewEmpty = (ProgressBar) findViewById(android.R.id.empty);
-
-        //setupRecyclerView();
+        ItemOffsetDecoration itemDecoration = new ItemOffsetDecoration(getApplicationContext(), R.dimen.thumbnail_padding);
+        mRecyclerView.addItemDecoration(itemDecoration);
 
         if (savedInstanceState != null) {
-            relevantPhotos = savedInstanceState.getParcelableArrayList(IntentUtil.RELEVANT_PHOTOS);
+            mLocalPhotoList = savedInstanceState.getParcelableArrayList(IntentUtil.PHOTO_LIST);
         }
-        displayData();
-    }
-
-    private void displayData() {
-        if (relevantPhotos != null) {
-            populateGrid();
-        } else {
-            UnsplashService unsplashApi = new RestAdapter.Builder()
-                    .setEndpoint(UnsplashService.ENDPOINT)
-                    .build()
-                    .create(UnsplashService.class);
-            unsplashApi.getFeed(new Callback<List<Photo>>() {
-                @Override
-                public void success(List<Photo> photos, Response response) {
-                    
-                    // the first items not interesting to us, get the last <n>
-                    relevantPhotos = new ArrayList<>(photos.subList(photos.size() - PHOTO_COUNT,
-                            photos.size()));
-//                    relevantPhotos = new ArrayList<>(photos.subList(0, PHOTO_COUNT));
-                    populateGrid();
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    Log.e(TAG, "Error retrieving Unsplash feed:", error);
-                }
-            });
-        }
-    }
-
-    private void populateGrid() {
-        mRecyclerView.setAdapter(new PhotoAdapter(this, relevantPhotos));
-        mRecyclerView.addOnItemTouchListener(new OnItemSelectedListener(MainActivity.this) {
-            public void onItemSelected(RecyclerView.ViewHolder holder, int position) {
-                if (!(holder instanceof PhotoViewHolder)) {
-                    return;
-                }
-                GalleryImageBinding binding = ((PhotoViewHolder) holder).getBinding();
-                final Intent intent = getDetailActivityStartIntent(MainActivity.this,
-                        relevantPhotos, position, binding);
-                final ActivityOptions activityOptions = getActivityOptions(binding);
-
-                MainActivity.this.startActivityForResult(intent, IntentUtil.REQUEST_CODE,
-                        activityOptions.toBundle());
-            }
-        });
-        mViewEmpty.setVisibility(View.GONE);
+        
+        loadImages();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(IntentUtil.RELEVANT_PHOTOS, relevantPhotos);
+        outState.putParcelableArrayList(IntentUtil.PHOTO_LIST, mLocalPhotoList);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onActivityReenter(int resultCode, Intent data) {
+        
         postponeEnterTransition();
+        
         // Start the postponed transition when the recycler view is ready to be drawn.
         mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
@@ -149,6 +109,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        // Has selected image changed?
         if (data == null) {
             return;
         }
@@ -162,36 +123,13 @@ public class MainActivity extends Activity {
             Log.w(TAG, "onActivityReenter: Holder is null, remapping cancelled.");
             return;
         }
-        DetailSharedElementEnterCallback callback =
-                new DetailSharedElementEnterCallback(getIntent());
+        DetailSharedElementEnterCallback callback = new DetailSharedElementEnterCallback(getIntent());
         callback.setBinding(holder.getBinding());
         setExitSharedElementCallback(callback);
     }
 
-    private void setupRecyclerView() {
-        GridLayoutManager gridLayoutManager = (GridLayoutManager) mRecyclerView.getLayoutManager();
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                /* emulating https://material-design.storage.googleapis.com/publish/material_v_4/material_ext_publish/0B6Okdz75tqQsck9lUkgxNVZza1U/style_imagery_integration_scale1.png */
-                switch (position % 6) {
-                    case 5:
-                        return 3;
-                    case 3:
-                        return 2;
-                    default:
-                        return 1;
-                }
-            }
-        });
-        mRecyclerView.addItemDecoration(new GridMarginDecoration(
-                getResources().getDimensionPixelSize(R.dimen.grid_item_spacing)));
-        mRecyclerView.setHasFixedSize(true);
-
-    }
-
     @NonNull
-    private static Intent getDetailActivityStartIntent(Activity host, ArrayList<Photo> photos,
+    private static Intent getDetailActivityStartIntent(Activity host, ArrayList<LocalPhoto> photos,
                                                        int position, GalleryImageBinding binding) {
         final Intent intent = new Intent(host, DetailActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
@@ -200,23 +138,91 @@ public class MainActivity extends Activity {
         return intent;
     }
 
-    private ActivityOptions getActivityOptions(GalleryImageBinding binding) {
-        Pair photoPair = Pair.create(binding.photo, binding.photo.getTransitionName());
-        View decorView = getWindow().getDecorView();
-        View statusBackground = decorView.findViewById(android.R.id.statusBarBackground);
-        View navBackground = decorView.findViewById(android.R.id.navigationBarBackground);
-        Pair statusPair = Pair.create(statusBackground,
-                statusBackground.getTransitionName());
-
-        final ActivityOptions options;
-        if (navBackground == null) {
-            options = ActivityOptions.makeSceneTransitionAnimation(this,
-                    photoPair, statusPair);
+    private ActivityOptionsCompat getActivityOptions(GalleryImageBinding binding) {
+        
+        List<android.support.v4.util.Pair<View, String>> sharedElements = new ArrayList<>();
+        sharedElements.add(Pair.create((View) binding.photo, binding.photo.getTransitionName()));
+        
+        Pair[] result = new Pair[sharedElements.size()];
+        sharedElements.toArray(result);
+    
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(this, result);
+    }
+    
+    // Can be extended to load other sources
+    protected void loadImages() {
+        if (mLocalPhotoList != null) {
+            populateGrid();
+            
         } else {
-            Pair navPair = Pair.create(navBackground, navBackground.getTransitionName());
-            options = ActivityOptions.makeSceneTransitionAnimation(this,
-                    photoPair, statusPair, navPair);
+            mLocalPhotoList = LocalPhotoDataProvider.getPhotoList(getApplicationContext());
+            
+            // Add listeners here. When ready do:
+            
+            populateGrid();
         }
-        return options;
+    }
+    
+    private void populateGrid() {
+        
+        final Activity activity = this;
+        
+        mRecyclerView.setAdapter(new PhotoAdapter(this, mLocalPhotoList));
+        mRecyclerView.addOnItemTouchListener(new OnItemSelectedListener(getApplicationContext()) {
+            
+            public void onItemSelected(RecyclerView.ViewHolder holder, int position) {
+                
+                if (!(holder instanceof PhotoViewHolder)) {
+                    return;
+                }
+                
+                GalleryImageBinding binding = ((PhotoViewHolder) holder).getBinding();
+                
+                final Intent intent = getDetailActivityStartIntent(activity, mLocalPhotoList, position, binding);
+                final ActivityOptionsCompat activityOptions = getActivityOptions(binding);
+                
+                activity.startActivityForResult(intent, IntentUtil.REQUEST_CODE,
+                    activityOptions.toBundle());
+            }
+        });
+    }
+    
+    /**
+     * Customize white status bar and nav bar
+     */
+    protected void applySystemStyles() {
+        
+        // setSystemUiVisibility flags must be set at the same time
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+            getWindow().setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+            getWindow().setNavigationBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+            
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+        }
+    }
+    
+    /**
+     * Add padding to gallery images
+     */
+    protected class ItemOffsetDecoration extends RecyclerView.ItemDecoration {
+        
+        private int mItemOffset;
+        
+        public ItemOffsetDecoration(int itemOffset) {
+            mItemOffset = itemOffset;
+        }
+        
+        public ItemOffsetDecoration(@NonNull Context context, @DimenRes int itemOffsetId) {
+            this(context.getResources().getDimensionPixelSize(itemOffsetId));
+        }
+        
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            super.getItemOffsets(outRect, view, parent, state);
+            outRect.set(mItemOffset, mItemOffset, mItemOffset, mItemOffset);
+        }
     }
 }

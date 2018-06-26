@@ -1,4 +1,4 @@
-package com.radleymarx.imagegallerydemo.ui.pager;
+package com.radleymarx.imagegallerydemo.ui.detail;
 
 import android.app.Activity;
 import android.databinding.DataBindingUtil;
@@ -9,6 +9,7 @@ import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -16,69 +17,75 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.github.chrisbanes.photoview.PhotoView;
+import com.radleymarx.imagegallerydemo.DetailActivity;
 import com.radleymarx.imagegallerydemo.R;
-import com.radleymarx.imagegallerydemo.data.model.Photo;
+import com.radleymarx.imagegallerydemo.data.local.LocalPhoto;
 import com.radleymarx.imagegallerydemo.databinding.DetailImageBinding;
-import com.radleymarx.imagegallerydemo.ui.DetailSharedElementEnterCallback;
+import com.radleymarx.imagegallerydemo.transition.DetailSharedElementEnterCallback;
 
 import java.util.List;
 
-/**
- * Adapter for paging detail views.
- */
+
 
 public class DetailViewPagerAdapter extends PagerAdapter {
 
-    private final List<Photo> allPhotos;
-    private final LayoutInflater layoutInflater;
-    private final int photoWidth;
+    private final List<LocalPhoto> mPhotoList;
+    private final LayoutInflater mLayoutInflater;
     private final Activity mActivity;
-    private DetailSharedElementEnterCallback sharedElementCallback;
+    private DetailSharedElementEnterCallback mSharedElementCallback;
 
-    public DetailViewPagerAdapter(@NonNull Activity activity, @NonNull List<Photo> photos,
+    public DetailViewPagerAdapter(@NonNull Activity activity, @NonNull List<LocalPhoto> photos,
                                   @NonNull DetailSharedElementEnterCallback callback) {
-        layoutInflater = LayoutInflater.from(activity);
-        allPhotos = photos;
-        photoWidth = activity.getResources().getDisplayMetrics().widthPixels;
+        mLayoutInflater = LayoutInflater.from(activity);
+        mPhotoList = photos;
         mActivity = activity;
-        sharedElementCallback = callback;
+        mSharedElementCallback = callback;
     }
 
     @Override
     public int getCount() {
-        return allPhotos.size();
+        return mPhotoList.size();
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         DetailImageBinding binding =
-                DataBindingUtil.inflate(layoutInflater, R.layout.detail_image, container, false);
-        binding.setData(allPhotos.get(position));
+                DataBindingUtil.inflate(mLayoutInflater, R.layout.detail_image, container, false);
+        binding.setData(mPhotoList.get(position));
         onViewBound(binding);
         binding.executePendingBindings();
         container.addView(binding.getRoot());
+    
+
+        PhotoView imageView = (PhotoView) binding.getRoot().findViewById(R.id.photo);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((DetailActivity) mActivity).toggleUI();
+                //Toast.makeText(mActivity, "Ping", Toast.LENGTH_SHORT).show();
+            }
+        });
+        
         return binding;
     }
 
+
     private void onViewBound(DetailImageBinding binding) {
-    
-        
-        // .centerCrop()
+
         RequestOptions options = new RequestOptions()
             .placeholder(R.color.placeholder)
-            .skipMemoryCache(false)
+            .skipMemoryCache(true) // true value required for smooth transition
             .fitCenter();
         
         Glide.with(mActivity)
-                .load(binding.getData().getPhotoUrl(photoWidth))
+                .load(binding.getData().id)
                 .apply(options)
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable>
                         target, boolean isFirstResource) {
-                        // The postponeEnterTransition is called on the parent ImagePagerFragment, so the
-                        // startPostponedEnterTransition() should also be called on it to get the transition
-                        // going in case of a failure.
+
                         mActivity.startPostponedEnterTransition();
                         return false;
                     }
@@ -86,9 +93,7 @@ public class DetailViewPagerAdapter extends PagerAdapter {
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable>
                         target, DataSource dataSource, boolean isFirstResource) {
-                        // The postponeEnterTransition is called on the parent ImagePagerFragment, so the
-                        // startPostponedEnterTransition() should also be called on it to get the transition
-                        // going when the image is ready.
+
                         mActivity.startPostponedEnterTransition();
                         return false;
                     }
@@ -99,7 +104,7 @@ public class DetailViewPagerAdapter extends PagerAdapter {
     @Override
     public void setPrimaryItem(ViewGroup container, int position, Object object) {
         if (object instanceof DetailImageBinding) {
-            sharedElementCallback.setBinding((DetailImageBinding) object);
+            mSharedElementCallback.setBinding((DetailImageBinding) object);
         }
     }
 

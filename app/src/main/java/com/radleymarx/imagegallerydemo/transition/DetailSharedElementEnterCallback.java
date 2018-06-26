@@ -1,4 +1,4 @@
-package com.radleymarx.imagegallerydemo.ui;
+package com.radleymarx.imagegallerydemo.transition;
 
 import android.app.SharedElementCallback;
 import android.content.Intent;
@@ -27,9 +27,12 @@ public class DetailSharedElementEnterCallback extends SharedElementCallback {
     private DetailImageBinding currentDetailBinding;
     private GalleryImageBinding currentPhotoBinding;
     private Rect targetPadding;
+    
+    private final List<View> mSharedElementViews;
 
     public DetailSharedElementEnterCallback(Intent intent) {
         this.intent = intent;
+        mSharedElementViews = new ArrayList<>();
     }
     
     @Override
@@ -42,6 +45,12 @@ public class DetailSharedElementEnterCallback extends SharedElementCallback {
     public void onSharedElementEnd(List<String> sharedElementNames,
                                    List<View> sharedElements,
                                    List<View> sharedElementSnapshots) {
+    
+        for (View sharedElementView : mSharedElementViews) {
+        
+            // no effect on transition hack I think it lays out out the checkbox
+            forceSharedElementLayout(sharedElementView);
+        }
     }
     
     @Override
@@ -69,7 +78,7 @@ public class DetailSharedElementEnterCallback extends SharedElementCallback {
             throw new NullPointerException("Must set a binding before transitioning.");
         }
     }
-
+    
     /**
      * Maps all views that don't start with "android" namespace.
      *

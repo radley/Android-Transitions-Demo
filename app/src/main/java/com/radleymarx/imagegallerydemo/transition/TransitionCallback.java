@@ -1,4 +1,4 @@
-package com.radleymarx.imagegallerydemo.ui;
+package com.radleymarx.imagegallerydemo.transition;
 
 import android.transition.Transition;
 

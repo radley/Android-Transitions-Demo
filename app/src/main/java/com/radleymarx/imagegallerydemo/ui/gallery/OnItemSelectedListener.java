@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.ui.grid;
+package com.radleymarx.imagegallerydemo.ui.gallery;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -42,8 +42,10 @@ public abstract class OnItemSelectedListener implements RecyclerView.OnItemTouch
     public final boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
         if (gestureDetector.onTouchEvent(e)) {
             View touchedView = rv.findChildViewUnder(e.getX(), e.getY());
-            onItemSelected(rv.findContainingViewHolder(touchedView),
-                    rv.getChildAdapterPosition(touchedView));
+            
+            if(touchedView != null)
+                onItemSelected(rv.findContainingViewHolder(touchedView),
+                        rv.getChildAdapterPosition(touchedView));
         }
         return false;
     }

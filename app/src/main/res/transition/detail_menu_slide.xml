@@ -1,0 +1,13 @@
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
+  android:interpolator="@android:interpolator/fast_out_slow_in">
+  <targets>
+    <target android:targetId="@id/bottom_menu" />
+  </targets>
+  <slide
+    android:slideEdge="bottom"
+    android:duration="@android:integer/config_mediumAnimTime"
+    android:interpolator="@android:interpolator/linear_out_slow_in"/>
+  <fade
+    android:duration="@android:integer/config_mediumAnimTime"
+    android:interpolator="@android:interpolator/linear_out_slow_in"/>
+</transitionSet>
