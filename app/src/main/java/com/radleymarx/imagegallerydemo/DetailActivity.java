@@ -70,10 +70,6 @@ public class DetailActivity extends AppCompatActivity {
         mActionbar = getSupportActionBar();
         mActionbar.setDisplayHomeAsUpEnabled(true);
         
-//        if(getResources().getBoolean(R.bool.portrait_only)){
-//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//        }
-        
         Intent intent = getIntent();
         sharedElementCallback = new DetailSharedElementEnterCallback(intent);
         setEnterSharedElementCallback(sharedElementCallback);
@@ -99,12 +95,12 @@ public class DetailActivity extends AppCompatActivity {
         
         // TODO save this for menu bar
         TransitionSet transitionSet = new TransitionSet();
-        Slide slide = new Slide(Gravity.BOTTOM);
-        slide.setInterpolator(AnimationUtils.loadInterpolator(this,
-            android.R.interpolator.linear_out_slow_in));
-        slide.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
-
-        transitionSet.addTransition(slide);
+//        Slide slide = new Slide(Gravity.BOTTOM);
+//        slide.setInterpolator(AnimationUtils.loadInterpolator(this,
+//            android.R.interpolator.linear_out_slow_in));
+//        slide.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
+//
+//        transitionSet.addTransition(slide);
         transitionSet.addTransition(new Fade());
         
         getWindow().setEnterTransition(transitionSet);
@@ -225,8 +221,6 @@ public class DetailActivity extends AppCompatActivity {
         
     }
     
-
-    
     protected void prepareBottomMenu() {
         
         prepareMenuButton(R.id.plus_one_btn, R.string.plus_one);
@@ -234,8 +228,8 @@ public class DetailActivity extends AppCompatActivity {
         prepareMenuButton(R.id.add_btn, R.string.add);
         prepareMenuButton(R.id.share_btn, R.string.share);
     
-        // get bottom menu positions for offscreen animation
-        // (Show / hide system UI breaks layout position)
+        // Manually determining the Y-positions for showing / hiding the bottom menu
+        // due to bug with showing / hiding the nav bar
         ViewTreeObserver vto = mBottomMenu.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override

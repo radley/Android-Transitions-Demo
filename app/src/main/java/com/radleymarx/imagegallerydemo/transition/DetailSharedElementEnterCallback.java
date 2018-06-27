@@ -2,16 +2,10 @@ package com.radleymarx.imagegallerydemo.transition;
 
 import android.app.SharedElementCallback;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.Rect;
 import android.support.annotation.NonNull;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.radleymarx.imagegallerydemo.IntentUtil;
 import com.radleymarx.imagegallerydemo.databinding.DetailImageBinding;
 import com.radleymarx.imagegallerydemo.databinding.GalleryImageBinding;
 
@@ -21,17 +15,14 @@ import java.util.Map;
 
 public class DetailSharedElementEnterCallback extends SharedElementCallback {
 
-    private final Intent intent;
-    private float targetTextSize;
-    private ColorStateList targetTextColors;
-    private DetailImageBinding currentDetailBinding;
-    private GalleryImageBinding currentPhotoBinding;
-    private Rect targetPadding;
+    private final Intent mIntent;
+    private DetailImageBinding mCurrentDetailBinding;
+    private GalleryImageBinding mCurrentPhotoBinding;
     
     private final List<View> mSharedElementViews;
 
     public DetailSharedElementEnterCallback(Intent intent) {
-        this.intent = intent;
+        this.mIntent = intent;
         mSharedElementViews = new ArrayList<>();
     }
     
@@ -47,8 +38,6 @@ public class DetailSharedElementEnterCallback extends SharedElementCallback {
                                    List<View> sharedElementSnapshots) {
     
         for (View sharedElementView : mSharedElementViews) {
-        
-            // no effect on transition hack I think it lays out out the checkbox
             forceSharedElementLayout(sharedElementView);
         }
     }
@@ -60,20 +49,20 @@ public class DetailSharedElementEnterCallback extends SharedElementCallback {
     }
     
     public void setBinding(@NonNull DetailImageBinding binding) {
-        currentDetailBinding = binding;
-        currentPhotoBinding = null;
+        mCurrentDetailBinding = binding;
+        mCurrentPhotoBinding = null;
     }
     
     public void setBinding(@NonNull GalleryImageBinding binding) {
-        currentPhotoBinding = binding;
-        currentDetailBinding = null;
+        mCurrentPhotoBinding = binding;
+        mCurrentDetailBinding = null;
     }
     
     private ImageView getPhoto() {
-        if (currentPhotoBinding != null) {
-            return currentPhotoBinding.photo;
-        } else if (currentDetailBinding != null) {
-            return currentDetailBinding.photo;
+        if (mCurrentPhotoBinding != null) {
+            return mCurrentPhotoBinding.photo;
+        } else if (mCurrentDetailBinding != null) {
+            return mCurrentDetailBinding.photo;
         } else {
             throw new NullPointerException("Must set a binding before transitioning.");
         }

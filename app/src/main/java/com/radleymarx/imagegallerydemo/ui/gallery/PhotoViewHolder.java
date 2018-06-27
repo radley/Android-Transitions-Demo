@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 The Android Open Source Project
+ * Copyright (C) 2018 Radley Marx
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,14 @@ import com.radleymarx.imagegallerydemo.databinding.GalleryImageBinding;
 
 public class PhotoViewHolder extends RecyclerView.ViewHolder {
 
-    private final GalleryImageBinding binding;
+    private final GalleryImageBinding mBinding;
 
     public PhotoViewHolder(GalleryImageBinding itemBinding) {
         super(itemBinding.getRoot());
-        binding = itemBinding;
+        mBinding = itemBinding;
     }
 
     public GalleryImageBinding getBinding() {
-        return binding;
+        return mBinding;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 The Android Open Source Project
+ * Copyright (C) 2018 Radley Marx
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,7 @@ import android.content.Intent;
  * Holding intent extra names and utility methods for intent handling.
  */
 public class IntentUtil {
-    public static final String FONT_SIZE = "fontSize";
-    public static final String PADDING = "padding";
     public static final String PHOTO = "photo";
-    public static final String TEXT_COLOR = "color";
     public static final String PHOTO_LIST = "photo_list";
     public static final String SELECTED_ITEM_POSITION = "selected";
     public static final int REQUEST_CODE = 0;

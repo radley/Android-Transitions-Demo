@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 The Android Open Source Project
+ * Copyright (C) 2018 Radley Marx
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,26 +33,24 @@ import java.util.ArrayList;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
 
-    private final ArrayList<LocalPhoto> photos;
-    private final int requestedPhotoWidth;
-    private final LayoutInflater layoutInflater;
+    private final ArrayList<LocalPhoto> mPhotoList;
+    private final LayoutInflater mLayoutInflater;
 
     public PhotoAdapter(@NonNull Context context, @NonNull ArrayList<LocalPhoto> photos) {
-        this.photos = photos;
-        requestedPhotoWidth = context.getResources().getDisplayMetrics().widthPixels;
-        layoutInflater = LayoutInflater.from(context);
+        this.mPhotoList = photos;
+        mLayoutInflater = LayoutInflater.from(context);
     }
-
+    
     @Override
     public PhotoViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-        return new PhotoViewHolder((GalleryImageBinding) DataBindingUtil.inflate(layoutInflater,
+        return new PhotoViewHolder((GalleryImageBinding) DataBindingUtil.inflate(mLayoutInflater,
                 R.layout.gallery_image, parent, false));
     }
 
     @Override
     public void onBindViewHolder(final PhotoViewHolder holder, final int position) {
         GalleryImageBinding binding = holder.getBinding();
-        LocalPhoto data = photos.get(position);
+        LocalPhoto data = mPhotoList.get(position);
         binding.setData(data);
         binding.executePendingBindings();
     
@@ -62,7 +60,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
             .centerCrop()
             .placeholder(R.color.placeholder);
         
-        Glide.with(layoutInflater.getContext())
+        Glide.with(mLayoutInflater.getContext())
                 .load(holder.getBinding().getData().id)
                 .apply(options)
                 .into(holder.getBinding().photo);
@@ -70,11 +68,11 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
 
     @Override
     public int getItemCount() {
-        return photos.size();
+        return mPhotoList.size();
     }
 
     @Override
     public long getItemId(int position) {
-        return photos.get(position).id;
+        return mPhotoList.get(position).id;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 The Android Open Source Project
+ * Copyright (C) 2018 Radley Marx
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -52,48 +53,50 @@ public class MainActivity extends AppCompatActivity {
     
     private static final String TAG = "MainActivity";
     private RecyclerView mRecyclerView;
-    private ArrayList<LocalPhoto> mLocalPhotoList;
-
+    private ArrayList<LocalPhoto> mPhotoList;
+    
     private final Transition.TransitionListener sharedExitListener =
-            new TransitionCallback() {
-                @Override
-                public void onTransitionEnd(Transition transition) {
-                    setExitSharedElementCallback((SharedElementCallback) null);
-                }
-            };
-
+        new TransitionCallback() {
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                setExitSharedElementCallback((SharedElementCallback) null);
+            }
+        };
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    
-        if(getResources().getBoolean(R.bool.portrait_only)){
+        
+        // lock view to portrait on phones
+        if (getResources().getBoolean(R.bool.portrait_only)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-
+        
         applySystemStyles();
         postponeEnterTransition();
+        setupTransitions();
         
         // Listener to reset shared element exit transition callbacks.
         getWindow().getSharedElementExitTransition().addListener(sharedExitListener);
-
+        
         mRecyclerView = (RecyclerView) findViewById(R.id.image_grid);
         ItemOffsetDecoration itemDecoration = new ItemOffsetDecoration(getApplicationContext(), R.dimen.thumbnail_padding);
         mRecyclerView.addItemDecoration(itemDecoration);
-
+        
         if (savedInstanceState != null) {
-            mLocalPhotoList = savedInstanceState.getParcelableArrayList(IntentUtil.PHOTO_LIST);
+            mPhotoList = savedInstanceState.getParcelableArrayList(IntentUtil.PHOTO_LIST);
         }
         
-        loadImages();
+        loadPhotos();
     }
-
+    
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(IntentUtil.PHOTO_LIST, mLocalPhotoList);
+        outState.putParcelableArrayList(IntentUtil.PHOTO_LIST, mPhotoList);
         super.onSaveInstanceState(outState);
     }
-
+    
     @Override
     public void onActivityReenter(int resultCode, Intent data) {
         
@@ -108,17 +111,17 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        // Has selected image changed?
+        
+        // Did we select a new image in the other activity?
         if (data == null) {
             return;
         }
-
+        
         final int selectedItem = data.getIntExtra(IntentUtil.SELECTED_ITEM_POSITION, 0);
         mRecyclerView.scrollToPosition(selectedItem);
-
-        PhotoViewHolder holder = (PhotoViewHolder) mRecyclerView.
-                findViewHolderForAdapterPosition(selectedItem);
+        
+        PhotoViewHolder holder = (PhotoViewHolder) mRecyclerView.findViewHolderForAdapterPosition(selectedItem);
+        
         if (holder == null) {
             Log.w(TAG, "onActivityReenter: Holder is null, remapping cancelled.");
             return;
@@ -127,38 +130,51 @@ public class MainActivity extends AppCompatActivity {
         callback.setBinding(holder.getBinding());
         setExitSharedElementCallback(callback);
     }
+    
+    private void setupTransitions() {
 
+        TransitionInflater inflater = TransitionInflater.from(this);
+        Transition exitTransition = inflater.inflateTransition(R.transition.transition_explode);
+        getWindow().setExitTransition(exitTransition);
+        
+        Transition reenterTransition = inflater.inflateTransition(R.transition.transition_explode);
+        getWindow().setReenterTransition(reenterTransition);
+
+    }
+    
     @NonNull
-    private static Intent getDetailActivityStartIntent(Activity host, ArrayList<LocalPhoto> photos,
-                                                       int position, GalleryImageBinding binding) {
+    private static Intent getDetailActivityStartIntent(Activity host, ArrayList<LocalPhoto> photos, int position) {
+        
         final Intent intent = new Intent(host, DetailActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
         intent.putParcelableArrayListExtra(IntentUtil.PHOTO, photos);
         intent.putExtra(IntentUtil.SELECTED_ITEM_POSITION, position);
         return intent;
     }
-
+    
     private ActivityOptionsCompat getActivityOptions(GalleryImageBinding binding) {
         
+        // image and unique transition identifier (name)
         List<android.support.v4.util.Pair<View, String>> sharedElements = new ArrayList<>();
         sharedElements.add(Pair.create((View) binding.photo, binding.photo.getTransitionName()));
         
         Pair[] result = new Pair[sharedElements.size()];
         sharedElements.toArray(result);
-    
+        
         return ActivityOptionsCompat.makeSceneTransitionAnimation(this, result);
     }
     
-    // Can be extended to load other sources
-    protected void loadImages() {
-        if (mLocalPhotoList != null) {
+    // Extended to load other source
+    protected void loadPhotos() {
+        if (mPhotoList != null) {
             populateGrid();
             
         } else {
-            mLocalPhotoList = LocalPhotoDataProvider.getPhotoList(getApplicationContext());
+            
+            // easy resources images for demo
+            mPhotoList = LocalPhotoDataProvider.getPhotoList(getApplicationContext());
             
             // Add listeners here. When ready do:
-            
             populateGrid();
         }
     }
@@ -167,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         
         final Activity activity = this;
         
-        mRecyclerView.setAdapter(new PhotoAdapter(this, mLocalPhotoList));
+        mRecyclerView.setAdapter(new PhotoAdapter(this, mPhotoList));
         mRecyclerView.addOnItemTouchListener(new OnItemSelectedListener(getApplicationContext()) {
             
             public void onItemSelected(RecyclerView.ViewHolder holder, int position) {
@@ -178,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
                 
                 GalleryImageBinding binding = ((PhotoViewHolder) holder).getBinding();
                 
-                final Intent intent = getDetailActivityStartIntent(activity, mLocalPhotoList, position, binding);
+                final Intent intent = getDetailActivityStartIntent(activity, mPhotoList, position);
                 final ActivityOptionsCompat activityOptions = getActivityOptions(binding);
                 
                 activity.startActivityForResult(intent, IntentUtil.REQUEST_CODE,
@@ -192,15 +208,16 @@ public class MainActivity extends AppCompatActivity {
      */
     protected void applySystemStyles() {
         
-        // setSystemUiVisibility flags must be set at the same time
+        // setSystemUiVisibility flags must be set as group
+        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-            getWindow().setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+            getWindow().setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.statusPrimaryLight));
             getWindow().setNavigationBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
             
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+            getWindow().setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.statusPrimaryLight));
         }
     }
     

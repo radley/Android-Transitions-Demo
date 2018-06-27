@@ -54,7 +54,7 @@
       android:layout_width="@dimen/detail_menu_btn_width"
       android:layout_height="match_parent"
       android:src="@drawable/ic_forward_custom_24px"
-      android:tint="@color/colorPrimaryLight" />
+      android:tint="@color/colorPrimary" />
     
     <Space
       android:layout_width="0dp"

@@ -3,8 +3,8 @@
     <color name="colorPrimary">#e8e8e8</color>
     <color name="colorPrimaryDark">#222222</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="colorPrimaryLight">#e3e3e3</color>
     
+    <color name="statusPrimaryLight">#d4d4d4</color>
     <color name="detailPrimary">#333333</color>
     <color name="placeholder">#ddd</color>
 </resources>

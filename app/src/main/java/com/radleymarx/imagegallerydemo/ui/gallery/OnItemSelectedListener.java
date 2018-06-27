@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 The Android Open Source Project
+ * Copyright (C) 2018 Radley Marx
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import android.view.View;
 
 public abstract class OnItemSelectedListener implements RecyclerView.OnItemTouchListener {
 
-    private final GestureDetector gestureDetector;
+    private final GestureDetector mGestureDetector;
 
     public OnItemSelectedListener(Context context) {
-        gestureDetector = new GestureDetector(context,
+        mGestureDetector = new GestureDetector(context,
                 new GestureDetector.SimpleOnGestureListener() {
                     @Override
                     public boolean onSingleTapUp(MotionEvent e) {
@@ -40,7 +40,7 @@ public abstract class OnItemSelectedListener implements RecyclerView.OnItemTouch
 
     @Override
     public final boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-        if (gestureDetector.onTouchEvent(e)) {
+        if (mGestureDetector.onTouchEvent(e)) {
             View touchedView = rv.findChildViewUnder(e.getX(), e.getY());
             
             if(touchedView != null)
@@ -50,8 +50,7 @@ public abstract class OnItemSelectedListener implements RecyclerView.OnItemTouch
         return false;
     }
 
-
-
+    
     @Override
     public final void onTouchEvent(RecyclerView rv, MotionEvent e) {
         throw new UnsupportedOperationException("Not implemented");
