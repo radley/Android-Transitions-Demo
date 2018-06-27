@@ -14,6 +14,5 @@
   ~ limitations under the License.
   -->
 
-<resources>
-  <integer name="grid_span_count">3</integer>
-</resources>
+<!--resets transition to the default-->
+<transitionSet />

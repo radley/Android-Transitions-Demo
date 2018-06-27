@@ -1,13 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:id="@+id/image_grid"
+  android:id="@+id/coordinator_layout"
   android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:clipToPadding="false"
-  android:orientation="vertical"
-  android:padding="@dimen/grid_padding"
-  android:scrollbarStyle="outsideOverlay"
-  android:scrollbars="vertical"
-  app:layoutManager="android.support.v7.widget.GridLayoutManager"
-  app:spanCount="@integer/grid_span_count" />
+  android:layout_height="match_parent">
+  
+  <android.support.design.widget.AppBarLayout
+    android:id="@+id/appbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    
+    <android.support.v7.widget.Toolbar
+      android:id="@+id/toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+      
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        
+        <TextView
+          android:id="@+id/title"
+          style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/app_name" />
+        
+        <Spinner
+          android:id="@+id/spinner"
+          style="@style/Widget.AppCompat.Spinner"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:spinnerMode="dropdown" />
+      </LinearLayout>
+    
+    </android.support.v7.widget.Toolbar>
+  
+  </android.support.design.widget.AppBarLayout>
+  
+  <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/image_grid"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    android:padding="@dimen/grid_padding"
+    android:scrollbarStyle="outsideOverlay"
+    android:scrollbars="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    app:layoutManager="android.support.v7.widget.GridLayoutManager"
+    app:spanCount="@integer/grid_span_count" />
+</android.support.design.widget.CoordinatorLayout>

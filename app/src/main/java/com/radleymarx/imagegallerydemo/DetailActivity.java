@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 The Android Open Source Project
+ * Copyright (C) 2018 Radley Marx
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,16 +23,16 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageButton;
+import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
-import android.transition.Slide;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.transition.TransitionSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.radleymarx.imagegallerydemo.data.local.LocalPhoto;
@@ -42,10 +42,13 @@ import com.radleymarx.imagegallerydemo.ui.detail.DetailViewPagerAdapter;
 import java.util.List;
 
 public class DetailActivity extends AppCompatActivity {
-
+    
     private static final String STATE_INITIAL_ITEM = "initial";
-    private ViewPager mViewPager;
     private int mInitialItem;
+    protected ViewPager mViewPager;
+    protected int mSharedElementTransitionId;
+    protected int mEnterTransitionId;
+    protected int mExitTransitionId;
     protected ActionBar mActionbar;
     protected Toast mToast;
     protected List<LocalPhoto> mPhotoList;
@@ -54,76 +57,71 @@ public class DetailActivity extends AppCompatActivity {
     protected float mBottomMenuY;
     
     private final View.OnClickListener navigationOnClickListener =
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finishAfterTransition();
-                }
-            };
+        new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finishAfterTransition();
+            }
+        };
     
     private DetailSharedElementEnterCallback sharedElementCallback;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_detail);
-    
+        
         mActionbar = getSupportActionBar();
         mActionbar.setDisplayHomeAsUpEnabled(true);
         
         Intent intent = getIntent();
-        sharedElementCallback = new DetailSharedElementEnterCallback(intent);
+        
+        
+        sharedElementCallback = new DetailSharedElementEnterCallback();
         setEnterSharedElementCallback(sharedElementCallback);
         mInitialItem = intent.getIntExtra(IntentUtil.SELECTED_ITEM_POSITION, 0);
+        mSharedElementTransitionId = intent.getIntExtra(IntentUtil.SHARED_ELEMENT_TRANSITION, R.transition.shared_transition);
+        mEnterTransitionId = intent.getIntExtra(IntentUtil.DETAIL_ENTER_TRANSITION, R.transition.transition_detail_fade);
+        mExitTransitionId = intent.getIntExtra(IntentUtil.DETAIL_EXIT_TRANSITION, R.transition.transition_detail_fade);
         
         mPhotoList = intent.<LocalPhoto>getParcelableArrayListExtra(IntentUtil.PHOTO);
         mActionbar.setTitle(((LocalPhoto)mPhotoList.get(mInitialItem)).title);
-    
+        
         mBottomMenu = findViewById(R.id.bottom_menu);
         setUpViewPager();
         prepareBottomMenu();
-
+        
         if (savedInstanceState == null) {
-            postponeEnterTransition();
+            supportPostponeEnterTransition();
         }
-    
-        //setupTransition();
-
+        
+        setupTransition();
+        
         super.onCreate(savedInstanceState);
     }
     
-    private void setupTransition() {
-        
-        // TODO save this for menu bar
-        TransitionSet transitionSet = new TransitionSet();
-//        Slide slide = new Slide(Gravity.BOTTOM);
-//        slide.setInterpolator(AnimationUtils.loadInterpolator(this,
-//            android.R.interpolator.linear_out_slow_in));
-//        slide.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
-//
-//        transitionSet.addTransition(slide);
-        transitionSet.addTransition(new Fade());
-        
-        getWindow().setEnterTransition(transitionSet);
-    }
+    protected void setupTransition() {
+    
+        TransitionInflater inflater = TransitionInflater.from(this);
 
-    private void setUpViewPager() {
+        Transition sharedElementEnterTransition = inflater.inflateTransition(mSharedElementTransitionId);
+        getWindow().setSharedElementEnterTransition(sharedElementEnterTransition);
+
+
+        Transition enterTransition = inflater.inflateTransition(mEnterTransitionId);
+        getWindow().setEnterTransition(enterTransition);
+    
+
+        Transition exitTransition = inflater.inflateTransition(mExitTransitionId);
+        getWindow().setExitTransition(exitTransition);
+
+    }
+    
+    protected void setUpViewPager() {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(new DetailViewPagerAdapter(this, mPhotoList, sharedElementCallback));
         mViewPager.setCurrentItem(mInitialItem);
-
-        mViewPager.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom,
-                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                if (mViewPager.getChildCount() > 0) {
-                    mViewPager.removeOnLayoutChangeListener(this);
-                    //startPostponedEnterTransition();
-                }
-            }
-        });
-    
         mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-        
+            
             @Override
             public void onPageSelected(int position) {
                 if(position > 0)
@@ -131,13 +129,13 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
     }
-
+    
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(STATE_INITIAL_ITEM, mInitialItem);
         super.onSaveInstanceState(outState);
     }
-
+    
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         mInitialItem = savedInstanceState.getInt(STATE_INITIAL_ITEM, 0);
@@ -149,19 +147,19 @@ public class DetailActivity extends AppCompatActivity {
         onBackPressed();
         return true;
     }
-
+    
     @Override
     public void onBackPressed() {
         setActivityResult();
         super.onBackPressed();
     }
-
+    
     @Override
     public void finishAfterTransition() {
         setActivityResult();
         super.finishAfterTransition();
     }
-
+    
     private void setActivityResult() {
         if (mInitialItem == mViewPager.getCurrentItem()) {
             setResult(RESULT_OK);
@@ -175,19 +173,19 @@ public class DetailActivity extends AppCompatActivity {
     protected boolean mShowUI = true;
     
     public void toggleUI() {
-    
+        
         mShowUI = !mShowUI;
         if(mShowUI) showMenuUIs();
         else hideMenuUI();
     }
     
     private void hideMenuUI() {
-    
+        
         ObjectAnimator bottomMenuAnimator = ObjectAnimator.ofFloat(mBottomMenu, "y", mBottomMenuY, mScreenBottomY);
         bottomMenuAnimator.setDuration(350);
         bottomMenuAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         bottomMenuAnimator.start();
-    
+        
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
@@ -207,7 +205,7 @@ public class DetailActivity extends AppCompatActivity {
     // Shows the system bars by removing all the flags
     // except for the ones that make the content appear under the system bars.
     private void showMenuUIs() {
-    
+        
         ObjectAnimator bottomMenuAnimator = ObjectAnimator.ofFloat(mBottomMenu, "y", mScreenBottomY, mBottomMenuY);
         bottomMenuAnimator.setDuration(240);
         bottomMenuAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -223,11 +221,11 @@ public class DetailActivity extends AppCompatActivity {
     
     protected void prepareBottomMenu() {
         
-        prepareMenuButton(R.id.plus_one_btn, R.string.plus_one);
-        prepareMenuButton(R.id.comment_btn, R.string.comment);
-        prepareMenuButton(R.id.add_btn, R.string.add);
-        prepareMenuButton(R.id.share_btn, R.string.share);
-    
+        addToastToButton(R.id.plus_one_btn, R.string.plus_one);
+        addToastToButton(R.id.comment_btn, R.string.comment);
+        addToastToButton(R.id.add_btn, R.string.add);
+        addToastToButton(R.id.share_btn, R.string.share);
+        
         // Manually determining the Y-positions for showing / hiding the bottom menu
         // due to bug with showing / hiding the nav bar
         ViewTreeObserver vto = mBottomMenu.getViewTreeObserver();
@@ -235,12 +233,12 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onGlobalLayout() {
                 mBottomMenu.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-            
+                
                 // bottom of screen
                 DisplayMetrics displayMetrics = new DisplayMetrics();
                 getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
                 mScreenBottomY = displayMetrics.heightPixels + mBottomMenu.getHeight();
-            
+                
                 // menu's Y absolute Y position
                 int[] location = new int[2];
                 mBottomMenu.getLocationOnScreen(location);
@@ -249,7 +247,7 @@ public class DetailActivity extends AppCompatActivity {
         });
     }
     
-    protected void prepareMenuButton(int buttonView, int id) {
+    protected void addToastToButton(int buttonView, int id) {
         
         final int stringId = id;
         
@@ -277,6 +275,6 @@ public class DetailActivity extends AppCompatActivity {
         mToast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 240);
         mToast.show();
     }
-
+    
     
 }

@@ -31,11 +31,15 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import com.radleymarx.imagegallerydemo.data.local.LocalPhoto;
 import com.radleymarx.imagegallerydemo.data.local.LocalPhotoDataProvider;
@@ -49,11 +53,14 @@ import com.radleymarx.imagegallerydemo.ui.gallery.PhotoViewHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     
     private static final String TAG = "MainActivity";
     private RecyclerView mRecyclerView;
     private ArrayList<LocalPhoto> mPhotoList;
+    private int mSharedElementTransition;
+    private int mDetailViewEnterTransition;
+    private int mDetailViewExitTransition;
     
     private final Transition.TransitionListener sharedExitListener =
         new TransitionCallback() {
@@ -68,14 +75,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        
         // lock view to portrait on phones
         if (getResources().getBoolean(R.bool.portrait_only)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
         
-        applySystemStyles();
-        postponeEnterTransition();
-        setupTransitions();
+        applySystemUIStyles();
+        supportPostponeEnterTransition();
         
         // Listener to reset shared element exit transition callbacks.
         getWindow().getSharedElementExitTransition().addListener(sharedExitListener);
@@ -86,6 +95,16 @@ public class MainActivity extends AppCompatActivity {
         
         if (savedInstanceState != null) {
             mPhotoList = savedInstanceState.getParcelableArrayList(IntentUtil.PHOTO_LIST);
+        }
+        
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+            R.array.transitions_array, R.layout.spinner_item);
+        
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        if (spinner != null) {
+            spinner.setAdapter(adapter);
+            spinner.setOnItemSelectedListener(this);
         }
         
         loadPhotos();
@@ -99,15 +118,15 @@ public class MainActivity extends AppCompatActivity {
     
     @Override
     public void onActivityReenter(int resultCode, Intent data) {
-        
-        postponeEnterTransition();
+    
+        supportPostponeEnterTransition();
         
         // Start the postponed transition when the recycler view is ready to be drawn.
         mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
                 mRecyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
-                startPostponedEnterTransition();
+                supportStartPostponedEnterTransition();
                 return true;
             }
         });
@@ -126,29 +145,28 @@ public class MainActivity extends AppCompatActivity {
             Log.w(TAG, "onActivityReenter: Holder is null, remapping cancelled.");
             return;
         }
-        DetailSharedElementEnterCallback callback = new DetailSharedElementEnterCallback(getIntent());
+        DetailSharedElementEnterCallback callback = new DetailSharedElementEnterCallback();
         callback.setBinding(holder.getBinding());
         setExitSharedElementCallback(callback);
     }
     
-    private void setupTransitions() {
-
-        TransitionInflater inflater = TransitionInflater.from(this);
-        Transition exitTransition = inflater.inflateTransition(R.transition.transition_explode);
-        getWindow().setExitTransition(exitTransition);
-        
-        Transition reenterTransition = inflater.inflateTransition(R.transition.transition_explode);
-        getWindow().setReenterTransition(reenterTransition);
-
-    }
-    
     @NonNull
-    private static Intent getDetailActivityStartIntent(Activity host, ArrayList<LocalPhoto> photos, int position) {
+    private static Intent getDetailActivityStartIntent(Activity host, ArrayList<LocalPhoto> photos, int position,
+                                                       int sharedElementTransition, int enterTransition, int exitTransition) {
         
         final Intent intent = new Intent(host, DetailActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
         intent.putParcelableArrayListExtra(IntentUtil.PHOTO, photos);
         intent.putExtra(IntentUtil.SELECTED_ITEM_POSITION, position);
+        
+        // Has user selected new transitions?
+        if(sharedElementTransition > 0)
+            intent.putExtra(IntentUtil.SHARED_ELEMENT_TRANSITION, sharedElementTransition);
+        if(enterTransition > 0)
+            intent.putExtra(IntentUtil.DETAIL_ENTER_TRANSITION, enterTransition);
+        if(exitTransition > 0)
+            intent.putExtra(IntentUtil.DETAIL_EXIT_TRANSITION, exitTransition);
+        
         return intent;
     }
     
@@ -164,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
         return ActivityOptionsCompat.makeSceneTransitionAnimation(this, result);
     }
     
-    // Extended to load other source
+    // Extend to load from other sources
     protected void loadPhotos() {
         if (mPhotoList != null) {
             populateGrid();
@@ -194,7 +212,8 @@ public class MainActivity extends AppCompatActivity {
                 
                 GalleryImageBinding binding = ((PhotoViewHolder) holder).getBinding();
                 
-                final Intent intent = getDetailActivityStartIntent(activity, mPhotoList, position);
+                final Intent intent = getDetailActivityStartIntent(activity, mPhotoList, position,
+                    mSharedElementTransition, mDetailViewEnterTransition, mDetailViewExitTransition);
                 final ActivityOptionsCompat activityOptions = getActivityOptions(binding);
                 
                 activity.startActivityForResult(intent, IntentUtil.REQUEST_CODE,
@@ -206,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Customize white status bar and nav bar
      */
-    protected void applySystemStyles() {
+    protected void applySystemUIStyles() {
         
         // setSystemUiVisibility flags must be set as group
         
@@ -219,6 +238,53 @@ public class MainActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.statusPrimaryLight));
         }
+    }
+    
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        
+        // Apply a combination of transitions based on user selection
+        
+        // TODO redesign DetailView layout to allow for custom transitions, e.g. explode
+        // TODO move to extensible class
+        switch (position) {
+            case 1:
+                mSharedElementTransition = R.transition.shared_transition;
+                mDetailViewEnterTransition = R.transition.transition_detail_fade;
+                mDetailViewExitTransition = R.transition.transition_detail_fade;
+                setTransitions(R.transition.transition_explode_grid);
+                break;
+            case 2:
+                mSharedElementTransition = R.transition.shared_transition;
+                mDetailViewEnterTransition = R.transition.transition_detail_fade;
+                mDetailViewExitTransition = R.transition.transition_detail_fade;
+                setTransitions(R.transition.transition_explode_all, R.transition.transition_explode_all_reenter);
+                break;
+            default:
+                mSharedElementTransition = R.transition.shared_transition;
+                mDetailViewEnterTransition = R.transition.transition_detail_fade;
+                mDetailViewExitTransition = R.transition.transition_detail_fade;
+                setTransitions(R.transition.transition_auto);
+        }
+    }
+    
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // do nothing
+    }
+    
+    private void setTransitions(int transition) {
+        setTransitions(transition, transition);
+    }
+    
+    private void setTransitions(int exit, int reenter) {
+        
+        TransitionInflater inflater = TransitionInflater.from(this);
+        Transition exitTransition = inflater.inflateTransition(exit);
+        getWindow().setExitTransition(exitTransition);
+        
+        Transition reenterTransition = inflater.inflateTransition(reenter);
+        getWindow().setReenterTransition(reenterTransition);
     }
     
     /**

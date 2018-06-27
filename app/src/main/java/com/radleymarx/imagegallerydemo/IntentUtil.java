@@ -22,9 +22,12 @@ import android.content.Intent;
  * Holding intent extra names and utility methods for intent handling.
  */
 public class IntentUtil {
-    public static final String PHOTO = "photo";
-    public static final String PHOTO_LIST = "photo_list";
-    public static final String SELECTED_ITEM_POSITION = "selected";
+    public static final String PHOTO = "PHOTO";
+    public static final String PHOTO_LIST = "PHOTO_LIST";
+    public static final String SELECTED_ITEM_POSITION = "SELECTED_ITEM_POSITION";
+    public static final String SHARED_ELEMENT_TRANSITION = "SHARED_ELEMENT_TRANSITION";
+    public static final String DETAIL_ENTER_TRANSITION = "DETAIL_ENTER_TRANSITION";
+    public static final String DETAIL_EXIT_TRANSITION = "DETAIL_EXIT_TRANSITION";
     public static final int REQUEST_CODE = 0;
 
     /**

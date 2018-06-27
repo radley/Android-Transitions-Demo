@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2018 Radley Marx
   ~
@@ -14,6 +15,17 @@
   ~ limitations under the License.
   -->
 
-<resources>
-  <integer name="grid_span_count">3</integer>
-</resources>
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
+  android:interpolator="@android:interpolator/fast_out_slow_in">
+  <slide android:slideEdge="top">
+    <targets>
+      <target android:targetId="@id/appbar" />
+    </targets>
+  </slide>
+  <explode>
+    <targets>
+      <target android:excludeId="@android:id/statusBarBackground" />
+      <target android:excludeId="@android:id/navigationBarBackground" />
+    </targets>
+  </explode>
+</transitionSet>

@@ -15,13 +15,24 @@
   -->
 
 <transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
-  android:interpolator="@android:interpolator/fast_out_slow_in">
-  <targets>
-    <target android:targetId="@id/bottom_menu" />
-  </targets>
-  <slide
-    android:slideEdge="bottom"
-    android:duration="@android:integer/config_mediumAnimTime"/>
-  <fade
-    android:duration="@android:integer/config_mediumAnimTime"/>
+  android:startDelay="240"
+  android:interpolator="@android:interpolator/fast_out_slow_in"
+  android:transitionOrdering="together">
+  <!--<slide android:slideEdge="top">-->
+    <!--<targets>-->
+      <!--<target android:targetId="@id/toolbar" />-->
+    <!--</targets>-->
+  <!--</slide>-->
+  <slide android:slideEdge="bottom">
+    <targets>
+      <target android:targetId="@id/layout" />
+    </targets>
+  </slide>
+    <explode>
+        <targets>
+            <target android:excludeId="@id/pager" />
+            <target android:excludeId="@android:id/statusBarBackground" />
+            <target android:excludeId="@android:id/navigationBarBackground" />
+        </targets>
+    </explode>
 </transitionSet>
