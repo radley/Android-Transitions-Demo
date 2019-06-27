@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.ui.detail;
+package dev.radley.transitionsdemo.ui.detail;
 
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
@@ -33,14 +33,13 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.github.chrisbanes.photoview.PhotoView;
-import com.radleymarx.imagegallerydemo.DetailActivity;
-import com.radleymarx.imagegallerydemo.R;
-import com.radleymarx.imagegallerydemo.data.local.LocalPhoto;
-import com.radleymarx.imagegallerydemo.databinding.DetailImageBinding;
-import com.radleymarx.imagegallerydemo.transition.DetailSharedElementEnterCallback;
+import dev.radley.transitionsdemo.DetailActivity;
+import dev.radley.transitionsdemo.R;
+import dev.radley.transitionsdemo.data.local.LocalPhoto;
+import dev.radley.transitionsdemo.databinding.DetailImageBinding;
+import dev.radley.transitionsdemo.transition.DetailSharedElementEnterCallback;
 
 import java.util.List;
-
 
 
 public class DetailViewPagerAdapter extends PagerAdapter {
