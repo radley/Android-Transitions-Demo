@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.transition;
+package dev.radley.transitionsdemo.transition;
 
 import android.app.SharedElementCallback;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.radleymarx.imagegallerydemo.databinding.DetailImageBinding;
-import com.radleymarx.imagegallerydemo.databinding.GalleryImageBinding;
+import dev.radley.transitionsdemo.databinding.DetailImageBinding;
+import dev.radley.transitionsdemo.databinding.GalleryImageBinding;
 
 import java.util.ArrayList;
 import java.util.List;

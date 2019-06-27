@@ -2,7 +2,7 @@
   <data>
     <variable
       name="data"
-      type="com.radleymarx.imagegallerydemo.data.local.LocalPhoto" />
+      type="dev.radley.transitionsdemo.data.local.LocalPhoto" />
   </data>
 
   <com.github.chrisbanes.photoview.PhotoView

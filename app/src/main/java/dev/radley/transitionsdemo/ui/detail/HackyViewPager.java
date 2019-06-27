@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.ui.detail;
+package dev.radley.transitionsdemo.ui.detail;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;

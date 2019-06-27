@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo;
+package dev.radley.transitionsdemo;
 
 import android.app.Activity;
 import android.content.Context;
@@ -41,14 +41,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.radleymarx.imagegallerydemo.data.local.LocalPhoto;
-import com.radleymarx.imagegallerydemo.data.local.LocalPhotoDataProvider;
-import com.radleymarx.imagegallerydemo.databinding.GalleryImageBinding;
-import com.radleymarx.imagegallerydemo.transition.DetailSharedElementEnterCallback;
-import com.radleymarx.imagegallerydemo.transition.TransitionCallback;
-import com.radleymarx.imagegallerydemo.ui.gallery.OnItemSelectedListener;
-import com.radleymarx.imagegallerydemo.ui.gallery.PhotoAdapter;
-import com.radleymarx.imagegallerydemo.ui.gallery.PhotoViewHolder;
+import dev.radley.transitionsdemo.R;
+
+import dev.radley.transitionsdemo.data.local.LocalPhoto;
+import dev.radley.transitionsdemo.data.local.LocalPhotoDataProvider;
+import dev.radley.transitionsdemo.databinding.GalleryImageBinding;
+import dev.radley.transitionsdemo.transition.DetailSharedElementEnterCallback;
+import dev.radley.transitionsdemo.transition.TransitionCallback;
+import dev.radley.transitionsdemo.ui.gallery.OnItemSelectedListener;
+import dev.radley.transitionsdemo.ui.gallery.PhotoAdapter;
+import dev.radley.transitionsdemo.ui.gallery.PhotoViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         
         // lock view to portrait on phones
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Listener to reset shared element exit transition callbacks.
         getWindow().getSharedElementExitTransition().addListener(sharedExitListener);
         
-        mRecyclerView = (RecyclerView) findViewById(R.id.image_grid);
+        mRecyclerView = findViewById(R.id.image_grid);
         ItemOffsetDecoration itemDecoration = new ItemOffsetDecoration(getApplicationContext(), R.dimen.thumbnail_padding);
         mRecyclerView.addItemDecoration(itemDecoration);
         
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             mPhotoList = savedInstanceState.getParcelableArrayList(IntentUtil.PHOTO_LIST);
         }
         
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        Spinner spinner = findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
             R.array.transitions_array, R.layout.spinner_item);
         
@@ -294,16 +296,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         
         private int mItemOffset;
         
-        public ItemOffsetDecoration(int itemOffset) {
+        ItemOffsetDecoration(int itemOffset) {
             mItemOffset = itemOffset;
         }
         
-        public ItemOffsetDecoration(@NonNull Context context, @DimenRes int itemOffsetId) {
+        ItemOffsetDecoration(@NonNull Context context, @DimenRes int itemOffsetId) {
             this(context.getResources().getDimensionPixelSize(itemOffsetId));
         }
         
         @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view,
+                                   @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
             super.getItemOffsets(outRect, view, parent, state);
             outRect.set(mItemOffset, mItemOffset, mItemOffset, mItemOffset);
         }
