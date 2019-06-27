@@ -41,14 +41,15 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
         mLayoutInflater = LayoutInflater.from(context);
     }
     
+    @NonNull
     @Override
-    public PhotoViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+    public PhotoViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType) {
         return new PhotoViewHolder((GalleryImageBinding) DataBindingUtil.inflate(mLayoutInflater,
                 R.layout.gallery_image, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(final PhotoViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final PhotoViewHolder holder, final int position) {
         GalleryImageBinding binding = holder.getBinding();
         LocalPhoto data = mPhotoList.get(position);
         binding.setData(data);

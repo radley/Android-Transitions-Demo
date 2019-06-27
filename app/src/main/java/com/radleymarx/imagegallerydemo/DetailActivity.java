@@ -23,11 +23,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageButton;
-import android.support.v7.widget.Toolbar;
-import android.transition.Fade;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
-import android.transition.TransitionSet;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
@@ -71,6 +68,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         
         mActionbar = getSupportActionBar();
+        assert mActionbar != null;
         mActionbar.setDisplayHomeAsUpEnabled(true);
         
         Intent intent = getIntent();
@@ -83,8 +81,8 @@ public class DetailActivity extends AppCompatActivity {
         mEnterTransitionId = intent.getIntExtra(IntentUtil.DETAIL_ENTER_TRANSITION, R.transition.transition_detail_fade);
         mExitTransitionId = intent.getIntExtra(IntentUtil.DETAIL_EXIT_TRANSITION, R.transition.transition_detail_fade);
         
-        mPhotoList = intent.<LocalPhoto>getParcelableArrayListExtra(IntentUtil.PHOTO);
-        mActionbar.setTitle(((LocalPhoto)mPhotoList.get(mInitialItem)).title);
+        mPhotoList = intent.getParcelableArrayListExtra(IntentUtil.PHOTO);
+        mActionbar.setTitle(mPhotoList.get(mInitialItem).title);
         
         mBottomMenu = findViewById(R.id.bottom_menu);
         setUpViewPager();
@@ -117,7 +115,7 @@ public class DetailActivity extends AppCompatActivity {
     }
     
     protected void setUpViewPager() {
-        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager = findViewById(R.id.pager);
         mViewPager.setAdapter(new DetailViewPagerAdapter(this, mPhotoList, sharedElementCallback));
         mViewPager.setCurrentItem(mInitialItem);
         mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -125,7 +123,7 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 if(position > 0)
-                    mActionbar.setTitle(((LocalPhoto)mPhotoList.get(position)).title);
+                    mActionbar.setTitle(mPhotoList.get(position).title);
             }
         });
     }
@@ -251,7 +249,7 @@ public class DetailActivity extends AppCompatActivity {
         
         final int stringId = id;
         
-        AppCompatImageButton button = (AppCompatImageButton) findViewById(buttonView);
+        AppCompatImageButton button = findViewById(buttonView);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

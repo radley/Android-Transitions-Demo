@@ -17,6 +17,7 @@
 package com.radleymarx.imagegallerydemo.ui.gallery;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -39,7 +40,7 @@ public abstract class OnItemSelectedListener implements RecyclerView.OnItemTouch
     public abstract void onItemSelected(RecyclerView.ViewHolder holder, int position);
 
     @Override
-    public final boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+    public final boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
         if (mGestureDetector.onTouchEvent(e)) {
             View touchedView = rv.findChildViewUnder(e.getX(), e.getY());
             
@@ -52,7 +53,7 @@ public abstract class OnItemSelectedListener implements RecyclerView.OnItemTouch
 
     
     @Override
-    public final void onTouchEvent(RecyclerView rv, MotionEvent e) {
+    public final void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
         throw new UnsupportedOperationException("Not implemented");
     }
 

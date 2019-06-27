@@ -16,7 +16,6 @@
 
 package com.radleymarx.imagegallerydemo.ui.detail;
 
-import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -26,7 +25,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -65,8 +63,9 @@ public class DetailViewPagerAdapter extends PagerAdapter {
         return mPhotoList.size();
     }
 
+    @NonNull
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(@NonNull ViewGroup container, int position) {
         DetailImageBinding binding =
                 DataBindingUtil.inflate(mLayoutInflater, R.layout.detail_image, container, false);
         binding.setData(mPhotoList.get(position));
@@ -75,7 +74,7 @@ public class DetailViewPagerAdapter extends PagerAdapter {
         container.addView(binding.getRoot());
     
 
-        PhotoView imageView = (PhotoView) binding.getRoot().findViewById(R.id.photo);
+        PhotoView imageView = binding.getRoot().findViewById(R.id.photo);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,20 +118,20 @@ public class DetailViewPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+    public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         if (object instanceof DetailImageBinding) {
             mSharedElementCallback.setBinding((DetailImageBinding) object);
         }
     }
 
     @Override
-    public boolean isViewFromObject(View view, Object object) {
+    public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return object instanceof DetailImageBinding
                 && view.equals(((DetailImageBinding) object).getRoot());
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView(((DetailImageBinding) object).getRoot());
     }
 }

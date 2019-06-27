@@ -23,12 +23,11 @@ import android.support.annotation.StringRes;
 import com.radleymarx.imagegallerydemo.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class LocalPhotoDataProvider {
     
     @DrawableRes
-    static final int[] IMAGE_DRAWABLES = {
+    private static final int[] IMAGE_DRAWABLES = {
         R.drawable.louge,
         R.drawable.mountainview,
         R.drawable.air,
@@ -40,7 +39,7 @@ public class LocalPhotoDataProvider {
     };
     
     @StringRes
-    static final int[] IMAGE_NAMES = {
+    private static final int[] IMAGE_NAMES = {
         R.string.louge,
         R.string.mountain_view,
         R.string.air,
@@ -60,5 +59,5 @@ public class LocalPhotoDataProvider {
         }
         
         return photos;
-    };
+    }
 }

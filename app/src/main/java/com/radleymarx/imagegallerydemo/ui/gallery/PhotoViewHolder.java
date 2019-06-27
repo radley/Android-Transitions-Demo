@@ -24,7 +24,7 @@ public class PhotoViewHolder extends RecyclerView.ViewHolder {
 
     private final GalleryImageBinding mBinding;
 
-    public PhotoViewHolder(GalleryImageBinding itemBinding) {
+    PhotoViewHolder(GalleryImageBinding itemBinding) {
         super(itemBinding.getRoot());
         mBinding = itemBinding;
     }

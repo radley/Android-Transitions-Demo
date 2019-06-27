@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         
         // lock view to portrait on phones
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Listener to reset shared element exit transition callbacks.
         getWindow().getSharedElementExitTransition().addListener(sharedExitListener);
         
-        mRecyclerView = (RecyclerView) findViewById(R.id.image_grid);
+        mRecyclerView = findViewById(R.id.image_grid);
         ItemOffsetDecoration itemDecoration = new ItemOffsetDecoration(getApplicationContext(), R.dimen.thumbnail_padding);
         mRecyclerView.addItemDecoration(itemDecoration);
         
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             mPhotoList = savedInstanceState.getParcelableArrayList(IntentUtil.PHOTO_LIST);
         }
         
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        Spinner spinner = findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
             R.array.transitions_array, R.layout.spinner_item);
         
@@ -294,16 +294,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         
         private int mItemOffset;
         
-        public ItemOffsetDecoration(int itemOffset) {
+        ItemOffsetDecoration(int itemOffset) {
             mItemOffset = itemOffset;
         }
         
-        public ItemOffsetDecoration(@NonNull Context context, @DimenRes int itemOffsetId) {
+        ItemOffsetDecoration(@NonNull Context context, @DimenRes int itemOffsetId) {
             this(context.getResources().getDimensionPixelSize(itemOffsetId));
         }
         
         @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view,
+                                   @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
             super.getItemOffsets(outRect, view, parent, state);
             outRect.set(mItemOffset, mItemOffset, mItemOffset, mItemOffset);
         }

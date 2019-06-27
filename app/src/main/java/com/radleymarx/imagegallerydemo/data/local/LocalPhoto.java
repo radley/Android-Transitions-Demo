@@ -18,8 +18,6 @@ package com.radleymarx.imagegallerydemo.data.local;
 
 
 import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
 import com.radleymarx.imagegallerydemo.data.BasePhoto;
 
