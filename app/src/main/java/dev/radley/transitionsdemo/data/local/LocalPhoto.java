@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.data.local;
+package dev.radley.transitionsdemo.data.local;
 
 
 import android.os.Parcel;
 
-import com.radleymarx.imagegallerydemo.data.BasePhoto;
+import dev.radley.transitionsdemo.data.BasePhoto;
 
 
 public class LocalPhoto extends BasePhoto {

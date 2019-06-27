@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo;
+package dev.radley.transitionsdemo;
 
 import android.app.Activity;
 import android.content.Context;
@@ -41,14 +41,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.radleymarx.imagegallerydemo.data.local.LocalPhoto;
-import com.radleymarx.imagegallerydemo.data.local.LocalPhotoDataProvider;
-import com.radleymarx.imagegallerydemo.databinding.GalleryImageBinding;
-import com.radleymarx.imagegallerydemo.transition.DetailSharedElementEnterCallback;
-import com.radleymarx.imagegallerydemo.transition.TransitionCallback;
-import com.radleymarx.imagegallerydemo.ui.gallery.OnItemSelectedListener;
-import com.radleymarx.imagegallerydemo.ui.gallery.PhotoAdapter;
-import com.radleymarx.imagegallerydemo.ui.gallery.PhotoViewHolder;
+import dev.radley.transitionsdemo.R;
+
+import dev.radley.transitionsdemo.data.local.LocalPhoto;
+import dev.radley.transitionsdemo.data.local.LocalPhotoDataProvider;
+import dev.radley.transitionsdemo.databinding.GalleryImageBinding;
+import dev.radley.transitionsdemo.transition.DetailSharedElementEnterCallback;
+import dev.radley.transitionsdemo.transition.TransitionCallback;
+import dev.radley.transitionsdemo.ui.gallery.OnItemSelectedListener;
+import dev.radley.transitionsdemo.ui.gallery.PhotoAdapter;
+import dev.radley.transitionsdemo.ui.gallery.PhotoViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;

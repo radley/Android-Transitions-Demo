@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.ui.gallery;
+package dev.radley.transitionsdemo.ui.gallery;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -25,9 +25,9 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.radleymarx.imagegallerydemo.R;
-import com.radleymarx.imagegallerydemo.data.local.LocalPhoto;
-import com.radleymarx.imagegallerydemo.databinding.GalleryImageBinding;
+import dev.radley.transitionsdemo.R;
+import dev.radley.transitionsdemo.data.local.LocalPhoto;
+import dev.radley.transitionsdemo.databinding.GalleryImageBinding;
 
 import java.util.ArrayList;
 

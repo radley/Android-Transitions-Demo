@@ -25,7 +25,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.radleymarx.imagegallerydemo"
+        applicationId "dev.radley.imagetransitiondemo"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1

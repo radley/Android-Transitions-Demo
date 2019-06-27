@@ -14,22 +14,29 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.ui.gallery;
+package dev.radley.transitionsdemo.data;
 
-import android.support.v7.widget.RecyclerView;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
-import com.radleymarx.imagegallerydemo.databinding.GalleryImageBinding;
-
-public class PhotoViewHolder extends RecyclerView.ViewHolder {
-
-    private final GalleryImageBinding mBinding;
-
-    PhotoViewHolder(GalleryImageBinding itemBinding) {
-        super(itemBinding.getRoot());
-        mBinding = itemBinding;
+public abstract class BasePhoto implements Parcelable {
+    
+    public int id;
+    public String title;
+    
+    public BasePhoto() {
+    }
+    
+    protected BasePhoto(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
     }
 
-    public GalleryImageBinding getBinding() {
-        return mBinding;
+    
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(title);
     }
 }

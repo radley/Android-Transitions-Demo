@@ -15,7 +15,7 @@
   -->
 
 <resources>
-    <string name="app_name">Image Gallery</string>
+    <string name="app_name">Transitions Demo</string>
     <string name="transition_photo">transition_photo</string>
     
     <string name="menu_select_message">%s selected</string>
