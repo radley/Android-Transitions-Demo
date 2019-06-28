@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.transition;
+package dev.radley.transitionsdemo.transition;
 
 import android.transition.Transition;
 

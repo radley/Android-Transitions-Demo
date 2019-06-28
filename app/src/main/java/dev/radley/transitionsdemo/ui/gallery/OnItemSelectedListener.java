@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo.ui.gallery;
+package dev.radley.transitionsdemo.ui.gallery;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

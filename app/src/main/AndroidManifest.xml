@@ -16,7 +16,7 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.radleymarx.imagegallerydemo" >
+    package="dev.radley.transitionsdemo" >
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -25,7 +25,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name">
         <activity
-            android:name=".MainActivity"
+            android:name="dev.radley.transitionsdemo.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
             <intent-filter>
@@ -35,7 +35,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DetailActivity"
+            android:name="dev.radley.transitionsdemo.DetailActivity"
             android:theme="@style/DetailTheme">
         </activity>
 

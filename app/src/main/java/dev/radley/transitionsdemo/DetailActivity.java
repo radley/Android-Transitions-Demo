@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.radleymarx.imagegallerydemo;
+package dev.radley.transitionsdemo;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;
@@ -32,9 +32,11 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
 
-import com.radleymarx.imagegallerydemo.data.local.LocalPhoto;
-import com.radleymarx.imagegallerydemo.transition.DetailSharedElementEnterCallback;
-import com.radleymarx.imagegallerydemo.ui.detail.DetailViewPagerAdapter;
+import dev.radley.transitionsdemo.R;
+
+import dev.radley.transitionsdemo.data.local.LocalPhoto;
+import dev.radley.transitionsdemo.transition.DetailSharedElementEnterCallback;
+import dev.radley.transitionsdemo.ui.detail.DetailViewPagerAdapter;
 
 import java.util.List;
 
